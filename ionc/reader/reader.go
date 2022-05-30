@@ -85,10 +85,26 @@ func readProperty(propertyName string, propertyDefinition map[string]interface{}
 
 func readParametrization(definitionMap map[string]interface{}) []schema.TypeParameter {
 	parametrization := definitionMap[parametrizationKey]
-	if parametrization != nil {
+	if parametrization == nil {
 		return make([]schema.TypeParameter, 0)
 	}
-	return nil
+	parametrizationMap := parametrization.(map[string]interface{})
+	result := make([]schema.TypeParameter, 0, len(parametrizationMap))
+	for parameterName, parameterDefinition := range parametrizationMap {
+		parameterDefinitionMap := parameterDefinition.(map[string]interface{})
+		result = append(result, readParameter(parameterName, parameterDefinitionMap))
+	}
+	return result
+}
+
+func readParameter(parameterName string, parameterDefinition map[string]interface{}) schema.TypeParameter {
+	return schema.TypeParameter{
+		SchemaElement: &schema.SchemaElement{
+			Id:          readId(parameterDefinition),
+			Description: readDescription(parameterDefinition),
+			Name:        parameterName,
+		},
+	}
 }
 
 func readProcedures(proceduresMap map[string]interface{}) ([]schema.Procedure, error) {

@@ -18,6 +18,12 @@ const (
 	testTypePropertyId          = "testTypePropertyId"
 	testTypePropertyDescription = "test type property description"
 
+	// PARAMETERS
+
+	testParameterName        = "testParameter"
+	testParameterId          = "testParameterId"
+	testParameterDescription = "testParameterDescription"
+
 	// PROCEDURES
 
 	testProcedureName                = "testProcedure"
@@ -36,6 +42,12 @@ func TestUnmarshalTypes_Smoke(t *testing.T) {
 		"    \"types\": {\n" +
 		"    \"" + testTypeName + "\": {\n" +
 		"      \"description\": \"" + testTypePropertyDescription + "\",\n" +
+		"      \"parametrization\": {\n" +
+		"        \"" + testParameterName + "\": {\n" +
+		"          \"id\": \"" + testParameterId + "\",\n" +
+		"          \"description\": \"" + testParameterDescription + "\"\n" +
+		"        }\n" +
+		"       },\n" +
 		"      \"properties\": {\n" +
 		"        \"" + testTypePropertyName + "\": {\n" +
 		"          \"id\": \"" + testTypePropertyId + "\",\n" +
@@ -56,6 +68,12 @@ func TestUnmarshalTypes_Smoke(t *testing.T) {
 		typesKey: map[string]interface{}{
 			testTypeName: map[string]interface{}{
 				descriptionKey: testTypePropertyDescription,
+				parametrizationKey: map[string]interface{}{
+					testParameterName: map[string]interface{}{
+						idKey:          testParameterId,
+						descriptionKey: testParameterDescription,
+					},
+				},
 				propertiesKey: map[string]interface{}{
 					testTypePropertyName: map[string]interface{}{
 						typeKey:        testTypePropertyType,
@@ -64,7 +82,6 @@ func TestUnmarshalTypes_Smoke(t *testing.T) {
 					},
 				},
 			}}}, f)
-	a.Nil(nil)
 }
 
 func TestUnmarshalProcedures_Smoke(t *testing.T) {
@@ -114,6 +131,12 @@ func TestReadTypes_Smoke(t *testing.T) {
 	typesMap := map[string]interface{}{
 		testTypeName: map[string]interface{}{
 			descriptionKey: testTypePropertyDescription,
+			parametrizationKey: map[string]interface{}{
+				testParameterName: map[string]interface{}{
+					idKey:          testParameterId,
+					descriptionKey: testParameterDescription,
+				},
+			},
 			propertiesKey: map[string]interface{}{
 				testTypePropertyName: map[string]interface{}{
 					typeKey:        testTypePropertyType,
@@ -131,12 +154,19 @@ func TestReadTypes_Smoke(t *testing.T) {
 	testType := types[testTypeName]
 	a.Equal(defaultId, testType.SchemaElement.Id)
 	a.Equal(testTypePropertyDescription, testType.SchemaElement.Description)
+	//properties
 	a.Equal(1, len(testType.PropertyTypes))
 	a.NotNil(testType.PropertyTypes[0])
 	a.Equal(testTypePropertyType, testType.PropertyTypes[0].TypeName)
 	a.Equal(testTypePropertyId, testType.PropertyTypes[0].SchemaElement.Id)
 	a.Equal(testTypePropertyName, testType.PropertyTypes[0].SchemaElement.Name)
 	a.Equal(testTypePropertyDescription, testType.PropertyTypes[0].SchemaElement.Description)
+	//parameters
+	a.Equal(1, len(testType.TypeParameters))
+	a.NotNil(testType.TypeParameters[0])
+	a.Equal(testParameterId, testType.TypeParameters[0].SchemaElement.Id)
+	a.Equal(testParameterName, testType.TypeParameters[0].SchemaElement.Name)
+	a.Equal(testParameterDescription, testType.TypeParameters[0].SchemaElement.Description)
 }
 
 func TestReadProcedures_Success(t *testing.T) {
