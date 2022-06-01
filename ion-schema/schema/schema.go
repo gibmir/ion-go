@@ -3,12 +3,21 @@ package schema
 import "fmt"
 
 type Schema struct {
-	Procedures []Procedure
-	Types      map[string]TypeDeclaration
+	Namespaces []Namespace
 }
 
 func (s *Schema) String() string {
-	return fmt.Sprintf("Schema(Procedures: %v, Types: %v)", s.Procedures, s.Types)
+	return fmt.Sprintf("Schema(Namespaces: %v)", s.Namespaces)
+}
+
+type Namespace struct {
+	SchemaElement *SchemaElement
+	Procedures    []Procedure
+	Types         map[string]TypeDeclaration
+}
+
+func (n *Namespace) String() string {
+	return fmt.Sprintf("Namespace(SchemaElement: %v, Procedures: %v, Types: %v)", n.SchemaElement, n.Procedures, n.Types)
 }
 
 type Procedure struct {

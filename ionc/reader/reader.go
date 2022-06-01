@@ -22,22 +22,59 @@ const (
 	returnTypeName     string = "return"
 )
 
-func ReadSchema(jsonPath string, apiJson *interface{}) (*schema.Schema, error) {
+func ReadSchema(jsonPath string, apiJson interface{}) (*schema.Schema, error) {
 	if apiJson == nil {
 		return nil, fmt.Errorf("provided schema [%s] is nil", jsonPath)
 	}
-	apiMap := (*apiJson).(map[string]interface{})
-	types, err := readTypes(apiMap[typesKey].(map[string]interface{}))
+	if apiJsonMap, ok := apiJson.(map[string]interface{}); ok {
+		namespaces, err := readNamespaces(apiJsonMap)
+		if err != nil {
+			return nil, fmt.Errorf("unable to parse schema [%s]. %w", jsonPath, err)
+		}
+		logrus.Infof("schema was successfully read from [%s]", jsonPath)
+		return &schema.Schema{Namespaces: namespaces}, nil
+	} else {
+		return nil, fmt.Errorf("provided schema [%s] has incorrect format", jsonPath)
+	}
+}
+
+func readNamespaces(apiJsonMap map[string]interface{}) ([]schema.Namespace, error) {
+	namespaces := make([]schema.Namespace, 0, len(apiJsonMap))
+	for namespaceName, definition := range apiJsonMap {
+		if namespaceDefinitionMap, ok := definition.(map[string]interface{}); ok {
+			namespace, err := readNamespace(namespaceName, namespaceDefinitionMap)
+			if err != nil {
+				return nil, fmt.Errorf("unable to read namespace [%s]. %w", namespaceName, err)
+			}
+			namespaces = append(namespaces, *namespace)
+		} else {
+			return nil, fmt.Errorf("namespace [%s] definition has incorrect format", namespaceName)
+		}
+	}
+	return namespaces, nil
+}
+
+func readNamespace(namespaceName string, namespaceDefinitionMap map[string]interface{}) (*schema.Namespace, error) {
+
+	types, err := readTypes(namespaceDefinitionMap[typesKey].(map[string]interface{}))
 	if err != nil {
-		return nil, fmt.Errorf("error occurred while parsing [%s] key from json [%s]. %w", typesKey, jsonPath, err)
+		return nil, fmt.Errorf("error occurred while parsing [%s] key. %w", typesKey, err)
 	}
 
-	procedures, err := readProcedures(apiMap[proceduresKey].(map[string]interface{}))
+	procedures, err := readProcedures(namespaceDefinitionMap[proceduresKey].(map[string]interface{}))
 	if err != nil {
-		return nil, fmt.Errorf("error occurred while parsing [%s] key from json [%s]. %w", proceduresKey, jsonPath, err)
+		return nil, fmt.Errorf("error occurred while parsing [%s] key. %w", proceduresKey, err)
 	}
-	logrus.Infof("schema was successfully read from [%s]", jsonPath)
-	return &schema.Schema{Types: types, Procedures: procedures}, nil
+
+	return &schema.Namespace{
+		SchemaElement: &schema.SchemaElement{
+			Id:          readId(namespaceDefinitionMap),
+			Name:        namespaceName,
+			Description: readDescription(namespaceDefinitionMap),
+		},
+		Types:      types,
+		Procedures: procedures,
+	}, nil
 }
 
 func readTypes(typesMap map[string]interface{}) (map[string]schema.TypeDeclaration, error) {
