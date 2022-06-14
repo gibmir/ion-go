@@ -9,7 +9,7 @@ type NamedRequest struct{
 type PositionalRequest struct{
 	Id string `json:"id"`
 	Method string `json:"method"`
-	Parameters []interface{} `json:"params"`
+	Parameters []interface{} `json:"params,omitempty"`
 }
 
 type NamedNotification struct{

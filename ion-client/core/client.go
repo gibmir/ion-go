@@ -1,7 +1,7 @@
 package client
 
 type Request0[R any] interface {
-	Call() <-chan *R
+	Call(id string) <-chan *R
 
 	Notification()
 }
@@ -13,6 +13,7 @@ type Request1[T, R any] interface {
 	PositionalNotification(argument *T)
 	NamedNotification(argument *T)
 }
+
 type Request2[T1, T2, R any] interface {
 	PositionalCall(id string, argument1 *T1, argument2 *T2) <-chan *R
 	NamedCall(id string, argument1 *T1, argument2 *T2) <-chan *R

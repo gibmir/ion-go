@@ -4,12 +4,12 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/gibmir/ion-go/ion-schema/schema"
+	"github.com/gibmir/ion-go/ion-schema/core"
 )
 
 const (
 	genericMarkSymbol = "<"
-	apiTemplateString = "PepegaStarege"
+	apiTemplateString = "package "
 )
 
 func GenerateTemplate(apiSchema *schema.Schema) *template.Template {
