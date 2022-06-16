@@ -5,10 +5,10 @@ import (
 	"io/ioutil"
 	"net"
 
-	"github.com/gibmir/ion-go/ion-api/core"
+	api "github.com/gibmir/ion-go/ion-api/core"
 	"github.com/gibmir/ion-go/ion-api/dto"
 	"github.com/gibmir/ion-go/ion-client/cache"
-	"github.com/gibmir/ion-go/ion-client/core"
+        client	"github.com/gibmir/ion-go/ion-client/core"
 	"github.com/sirupsen/logrus"
 )
 
@@ -30,24 +30,22 @@ func (r *ResponseReader) Run() {
 	if err != nil {
 		logrus.Error(err)
 	}
-
 }
 
 type TcpRequest0[R any] struct {
 	procedureName string
 	connection    net.Conn
-	channels      *cache.CallbacksCache
+	callbacks     *cache.CallbacksCache
 }
 
 func (r *TcpRequest0[R]) Call(id string) (chan *R, chan error) {
 	response := make(chan *R)
-	responseError := make(chan error)
+	responseError := make(chan *dto.ErrorResponse)
 	go func() {
-		callback := cache.Callback{
+		r.callbacks.Append(id, &cache.Callback{
 			Response: response,
 			Err:      responseError,
-		}
-		r.channels.Append(id, &callback)
+		})
 		request := dto.PositionalRequest{
 			Id:     id,
 			Method: r.procedureName,
@@ -56,6 +54,7 @@ func (r *TcpRequest0[R]) Call(id string) (chan *R, chan error) {
 		if err != nil {
 			responseError <- err
 		}
+		// use prefix with data size
 		r.connection.Write(requestBytes)
 	}()
 	return response, responseError
@@ -64,7 +63,7 @@ func (r *TcpRequest0[R]) Call(id string) (chan *R, chan error) {
 func (r *TcpRequest0[R]) Notification() {
 }
 
-func NoArg[R any](tcpClient *IonTcpClient, procedure core.JsonRemoteProcedure0[R]) *client.Request0[R] {
+func NoArg[R any](tcpClient *IonTcpClient, procedure api.JsonRemoteProcedure0[R]) *client.Request0[R] {
 	var request client.Request0[R]
 	return &request
 }

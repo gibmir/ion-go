@@ -1,7 +1,11 @@
 package cache
 
-import "github.com/sirupsen/logrus"
-import "sync"
+import (
+	"github.com/sirupsen/logrus"
+
+	"github.com/gibmir/ion-go/ion-api/dto"
+	"sync"
+)
 
 type CallbacksCache struct {
 	lock      sync.RWMutex
@@ -10,7 +14,7 @@ type CallbacksCache struct {
 
 type Callback struct {
 	Response interface{}
-	Err      chan error
+	Err      chan *dto.ErrorResponse
 }
 
 func (cache *CallbacksCache) Append(id string, callback *Callback) {
@@ -26,5 +30,7 @@ func (cache *CallbacksCache) Append(id string, callback *Callback) {
 func (cache *CallbacksCache) Poll(id string) *Callback {
 	defer cache.lock.RUnlock()
 	cache.lock.RLock()
-	return cache.callbacks[id]
+	callback := cache.callbacks[id]
+	delete(cache.callbacks, id)
+	return callback
 }
