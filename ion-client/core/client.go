@@ -1,7 +1,9 @@
 package client
 
+import "github.com/gibmir/ion-go/ion-api/dto"
+
 type Request0[R any] interface {
-	Call(id string) <-chan *R
+	Call(id string) (chan *R, chan *dto.ErrorResponse)
 
 	Notification()
 }
