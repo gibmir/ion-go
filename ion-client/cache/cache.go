@@ -3,7 +3,6 @@ package cache
 import (
 	"github.com/sirupsen/logrus"
 
-	"github.com/gibmir/ion-go/ion-api/dto"
 	"sync"
 )
 
@@ -14,7 +13,7 @@ type CallbacksCache struct {
 
 type Callback struct {
 	Response interface{}
-	Err      chan *dto.ErrorResponse
+	Err      chan error
 }
 
 func (cache *CallbacksCache) Append(id string, callback *Callback) {

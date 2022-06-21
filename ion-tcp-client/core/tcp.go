@@ -1,4 +1,4 @@
-package tcp
+package core
 
 import (
 	"encoding/json"
@@ -36,42 +36,41 @@ type TcpRequest0[R any] struct {
 	procedureName  string
 	address        string
 	connectionPool *ConnectionPool
-	connection     net.Conn
 	callbacks      *cache.CallbacksCache
 }
 
-func (r *TcpRequest0[R]) Call(id string) (chan *R, chan *dto.ErrorResponse) {
+func (r *TcpRequest0[R]) Call(id string) (chan *R, chan error) {
 	response := make(chan *R)
-	responseError := make(chan *dto.ErrorResponse)
+	responseError := make(chan error)
 	go func() {
 		r.callbacks.Append(id, &cache.Callback{
 			Response: response,
 			Err:      responseError,
 		})
-		connectionChannel, errorChannel := r.connectionPool.Get(r.address)
+		pool, errorChannel := r.connectionPool.Get(r.address)
 		select {
-		case connection := <-connectionChannel:
-			request := dto.PositionalRequest{
-				Id:     id,
-				Method: r.procedureName,
-			}
-			requestBytes, err := json.Marshal(request)
-			if err != nil {
-				responseError <- dto.NewErrorResponse(id,
-					&dto.JsonRpcError{
-						Message: err.Error(),
-					})
-			}
-			// use prefix with data size
-			(*connection).Write(requestBytes)
+		case connection := <-pool:
+			r.send(id, connection, pool, responseError)
 		case err := <-errorChannel:
-			responseError <- dto.NewErrorResponse(id,
-				&dto.JsonRpcError{
-					Message: err.Error(),
-				})
+			responseError <- err
 		}
 	}()
 	return response, responseError
+}
+
+func (r *TcpRequest0[R]) send(id string, connection *net.Conn, pool chan *net.Conn,
+	responseError chan error) {
+	defer Return(connection, pool)
+	request := dto.PositionalRequest{
+		Id:     id,
+		Method: r.procedureName,
+	}
+	requestBytes, err := json.Marshal(request)
+	if err != nil {
+		responseError <- err
+	}
+	// use prefix with data size
+	(*connection).Write(requestBytes)
 }
 
 func (r *TcpRequest0[R]) Notification() {

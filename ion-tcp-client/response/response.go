@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net"
+	"sync"
 
 	"github.com/gibmir/ion-go/ion-api/dto"
 	"github.com/gibmir/ion-go/ion-client/cache"
@@ -22,6 +23,7 @@ type ResponseReader struct {
 }
 
 func (r *ResponseReader) Run() {
+	sync.Pool
 	responseBytes, err := ioutil.ReadAll(r.connection)
 	if err != nil {
 		logrus.Warnf("unable to read from connection [%v]", r.connection.LocalAddr())
