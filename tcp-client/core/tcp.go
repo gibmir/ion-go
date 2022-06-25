@@ -2,13 +2,14 @@ package core
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net"
 
-	api "github.com/gibmir/ion-go/ion-api/core"
-	"github.com/gibmir/ion-go/ion-api/dto"
-	"github.com/gibmir/ion-go/ion-client/cache"
-	client "github.com/gibmir/ion-go/ion-client/core"
-	"github.com/gibmir/ion-go/ion-tcp-client/pool"
+	api "github.com/gibmir/ion-go/api/core"
+	"github.com/gibmir/ion-go/api/dto"
+	"github.com/gibmir/ion-go/client/cache"
+	client "github.com/gibmir/ion-go/client/core"
+	"github.com/gibmir/ion-go/tcp-client/pool"
 	"github.com/sirupsen/logrus"
 )
 
@@ -43,7 +44,7 @@ func (r *TcpRequest0[R]) Call(id string) (chan *R, chan error) {
 	return response, responseError
 }
 
-func (r *TcpRequest0[R]) send(id string, connection *net.Conn,  connections chan *net.Conn,
+func (r *TcpRequest0[R]) send(id string, connection *net.Conn, connections chan *net.Conn,
 	responseError chan error) {
 	defer pool.Return(connection, connections)
 	request := dto.PositionalRequest{
@@ -53,9 +54,18 @@ func (r *TcpRequest0[R]) send(id string, connection *net.Conn,  connections chan
 	requestBytes, err := json.Marshal(request)
 	if err != nil {
 		responseError <- err
+		return
 	}
 	// use prefix with data size
 	(*connection).Write(requestBytes)
+
+	responseBytes, err := ioutil.ReadAll(*connection)
+	if err != nil {
+		responseError <- err
+	}
+
+	responseBytes
+
 	logrus.Infof("request with id [%s] was send", id)
 }
 

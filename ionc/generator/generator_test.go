@@ -9,8 +9,7 @@ import (
 
 	//"text/template"
 
-	//"github.com/gibmir/ion-go/ion-schema/schema"
-	"github.com/gibmir/ion-go/ion-schema/core"
+	schema "github.com/gibmir/ion-go/schema/core"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -44,9 +43,9 @@ func TestGenerateTypesTemplate_Success(t *testing.T) {
 			Description: "testNamespaceDescription",
 		},
 		Procedures: []schema.Procedure{
-			schema.Procedure{
+			{
 				SchemaElement: &schema.SchemaElement{
-					Name: "testProcedureName",
+					Name:        "testProcedureName",
 					Description: "testProcedureDescription",
 				},
 			},

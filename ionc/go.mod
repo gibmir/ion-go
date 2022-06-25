@@ -3,7 +3,7 @@ module github.com/gibmir/ion-go/ionc
 go 1.18
 
 require (
-	github.com/gibmir/ion-go/ion-schema v0.0.0
+	github.com/gibmir/ion-go/schema v0.0.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.1
 )
@@ -15,4 +15,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.0 // indirect
 )
 
-replace github.com/gibmir/ion-go/ion-schema => ../ion-schema
+replace github.com/gibmir/ion-go/schema => ../schema

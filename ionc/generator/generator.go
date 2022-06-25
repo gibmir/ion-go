@@ -4,7 +4,7 @@ import (
 	"strings"
 	"text/template"
 
-	schema "github.com/gibmir/ion-go/ion-schema/core"
+	schema "github.com/gibmir/ion-go/schema/core"
 )
 
 const (

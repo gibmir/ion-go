@@ -1,4 +1,4 @@
-module github.com/gibmir/ion-go/ion-client
+module github.com/gibmir/ion-go/client
 
 require github.com/sirupsen/logrus v1.8.1
 
