@@ -1,9 +1,25 @@
 package pool
 
 import (
+	"bytes"
 	"net"
 	"sync"
 )
+
+type BufferPool struct {
+	poolSize     int
+	bufferLength int
+	bufferPool   chan *bytes.Buffer
+}
+
+func (pool *BufferPool) Get() *bytes.Buffer {
+
+	return <-pool.bufferPool
+}
+
+func (pool *BufferPool) Return(buffer *bytes.Buffer) {
+	pool.bufferPool <- buffer
+}
 
 type ConnectionPool struct {
 	poolSize int
