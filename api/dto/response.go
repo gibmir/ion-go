@@ -2,13 +2,18 @@ package dto
 
 const (
 	JsonRpcProtocol = "2.0"
+	IdKey           = "id"
+	JsonRpcKey      = "jsonrpc"
+	ResultKey       = "result"
+	ErrorKey        = "error"
 )
 
 // Positional/named Response
-type Response struct {
-	Id       string      `json:"id"`
-	Protocol string      `json:"jsonrpc"`
-	Result   interface{} `json:"result"`
+type Response[R any] struct {
+	Id       string `json:"id"`
+	Protocol string `json:"jsonrpc"`
+	Result   R      `json:"result"`
+	Error    Error  `json:"error,omitempty"`
 }
 
 // Notification response
@@ -22,23 +27,8 @@ type BatchResponse struct {
 	Responses []JsonRpcResponse
 }
 
-// Errors
-type ErrorResponse struct {
-	Id       string       `json:"id"`
-	Protocol string       `json:"jsonrpc"`
-	Error    JsonRpcError `json:"error"`
-}
-
-func NewErrorResponse(id string, jsonRpcError *JsonRpcError) *ErrorResponse {
-	return &ErrorResponse{
-		Id:       id,
-		Protocol: JsonRpcProtocol,
-		Error:    *jsonRpcError,
-	}
-}
-
-type JsonRpcError struct {
-	Code    int8   `json:"code"`
+type Error struct {
+	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 

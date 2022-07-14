@@ -21,6 +21,7 @@ type Request2[T1, T2, R any] interface {
 	PositionalNotification(argument1 *T1, argument2 *T2)
 	NamedNotification(argument1 *T1, argument2 *T2)
 }
+
 type Request3[T1, T2, T3, R any] interface {
 	PositionalCall(id string, argument1 *T1, argument2 *T2, argument3 *T3) <-chan *R
 	NamedCall(id string, argument1 *T1, argument2 *T2, argument3 *T3) <-chan *R
