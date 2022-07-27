@@ -12,19 +12,12 @@ const (
 type Response[R any] struct {
 	Id       string `json:"id"`
 	Protocol string `json:"jsonrpc"`
-	Result   R      `json:"result"`
-	Error    Error  `json:"error,omitempty"`
-}
-
-// Notification response
-type NotificationResponse struct {
-	Protocol string      `json:"jsonrpc"`
-	Result   interface{} `json:"result"`
+	Result   R      `json:"result,omitempty"`
+	Error    *Error `json:"error,omitempty"`
 }
 
 // Batch
 type BatchResponse struct {
-	Responses []JsonRpcResponse
 }
 
 type Error struct {
@@ -32,5 +25,3 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-type JsonRpcResponse interface {
-}

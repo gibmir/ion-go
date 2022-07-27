@@ -1,30 +1,31 @@
 package dto
 
-type NamedRequest struct{
-	Id string `json:"id"`
-	Method string `json:"method"`
-	Parameters map[string]interface{} `json:"params"`
-}
+import ()
 
-type PositionalRequest struct{
-	Id string `json:"id"`
-	Method string `json:"method"`
+const (
+	DefaultJsonRpcProtocolVersion = "2.0"
+)
+
+type PositionalRequest struct {
 	Parameters []interface{} `json:"params,omitempty"`
+	*Request   `json:",inline"`
 }
 
-type NamedNotification struct{
-	Method string `json:"method"`
-	Parameters map[string]interface{} `json:"params"`
+type NamedRequest struct {
+	Parameters map[string]interface{} `json:"params,omitempty"`
+	*Request   `json:",inline"`
 }
 
-type PositionalNotification struct{
-	Method string `json:"method"`
-	Parameters []interface{} `json:"params"`
+type Request struct {
+	Id       string `json:"id,omitempty"`
+	Method   string `json:"method"`
+	Protocol string `json:"jsonrpc"`
 }
 
-type BatchRequest struct{
-	Requests []JsonRpcRequest
+type Parameters struct {
+	NamedParameters      map[string]interface{} `json:",inline,omitempty"`
+	PositionalParameters []interface{}          `json:",inline,omitempty"`
 }
 
-type JsonRpcRequest interface{
+type BatchRequest struct {
 }
