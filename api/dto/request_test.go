@@ -1,20 +1,42 @@
-package dto
+package dto_test
 
 import (
-	"encoding/json"
 	"fmt"
-	"testing"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+
+	"encoding/json"
+
+	"github.com/gibmir/ion-go/api/dto"
 )
 
-func TestRequest_Success(t *testing.T) {
+const (
+	testId        = "testId"
+	testMethod    = "testMethod"
+	testParameter = "testParameter"
+)
 
-	request := PositionalRequest{
-		Parameters: []interface{}{"argument"},
-		Request: &Request{
-			Method: "someName",
-		},
-	}
-	jsonb, _ := json.Marshal(request)
+var _ = Describe("Request", func() {
+	Describe("Marshalling request", func() {
+		Context("with correct positional arguments", func() {
+			It("should be a correct json", func() {
+				positionalRequest := dto.PositionalRequest{
+					Request: &dto.Request{
+						Id:       testId,
+						Method:   testMethod,
+						Protocol: dto.DefaultJsonRpcProtocolVersion,
+					},
+					Parameters: []interface{}{testParameter},
+				}
+				bytes, err := json.Marshal(positionalRequest)
+				Expect(err).Should(BeNil())
 
-	fmt.Print(string(jsonb))
-}
+				json := string(bytes)
+				expected := fmt.Sprintf(`{"params":["%s"],"id":"%s","method":"%s","jsonrpc":"%s"}`,
+					testParameter, testId, testMethod, dto.DefaultJsonRpcProtocolVersion)
+				Expect(json).Should(Equal(expected))
+			})
+		})
+	})
+})
