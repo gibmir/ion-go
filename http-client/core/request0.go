@@ -13,13 +13,8 @@ type HttpRequest0[R any] struct {
 	*HttpRequest
 }
 
-func (r *HttpRequest0[R]) Call(id string) (chan *R, chan error) {
-	responseChannel := make(chan *R)
-	errorChannel := make(chan error)
-	go func() {
-		defer close(responseChannel)
-		defer close(errorChannel)
-
+func (r *HttpRequest0[R]) Call(id string, responseChannel chan *R, errorChannel chan error) {
+	go func(id string, responseChannel chan *R, errorChannel chan error) {
 		//prepare request
 		request := dto.PositionalRequest{
 			Request: &dto.Request{
@@ -53,8 +48,7 @@ func (r *HttpRequest0[R]) Call(id string) (chan *R, chan error) {
 
 		}
 		responseChannel <- &response.Result
-	}()
-	return responseChannel, errorChannel
+	}(id, responseChannel, errorChannel)
 }
 
 func (r *HttpRequest0[R]) Notify() {
@@ -71,7 +65,7 @@ func (r *HttpRequest0[R]) Notify() {
 		if err != nil {
 			logrus.Errorf("unable to marshal notification for method [%s]. %v",
 				r.methodName, err)
-				return
+			return
 		}
 		r.httpSender.sendNotification(notificationBytes, r.methodName)
 	}()

@@ -12,10 +12,8 @@ type HttpRequest3[T1, T2, T3, R any] struct {
 	*HttpRequest
 }
 
-func (r *HttpRequest3[T1, T2, T3, R]) PositionalCall(id string, firstArgument T1, secondArgument T2, thirdArgument T3) (chan *R, chan error) {
-	responseChannel := make(chan *R)
-	errorChannel := make(chan error)
-	go func() {
+func (r *HttpRequest3[T1, T2, T3, R]) PositionalCall(id string, firstArgument T1, secondArgument T2, thirdArgument T3, responseChannel chan *R, errorChannel chan error) {
+	go func(id string, firstArgument T1, secondArgument T2, thirdArgument T3, responseChannel chan *R, errorChannel chan error) {
 		defer close(responseChannel)
 		defer close(errorChannel)
 
@@ -53,12 +51,11 @@ func (r *HttpRequest3[T1, T2, T3, R]) PositionalCall(id string, firstArgument T1
 
 		}
 		responseChannel <- &response.Result
-	}()
-	return responseChannel, errorChannel
+	}(id, firstArgument, secondArgument, thirdArgument, responseChannel, errorChannel)
 }
 
 func (r *HttpRequest3[T1, T2, T3, R]) PositionalNotification(firstArgument T1, secondArgument T2, thirdArgument T3) {
-	go func() {
+	go func(firstArgument T1, secondArgument T2, thirdArgument T3) {
 		//prepare notification
 		request := dto.PositionalRequest{
 			Parameters: []interface{}{firstArgument, secondArgument, thirdArgument},
@@ -75,5 +72,5 @@ func (r *HttpRequest3[T1, T2, T3, R]) PositionalNotification(firstArgument T1, s
 			return
 		}
 		r.httpSender.sendNotification(notificationBytes, r.methodName)
-	}()
+	}(firstArgument, secondArgument, thirdArgument)
 }
