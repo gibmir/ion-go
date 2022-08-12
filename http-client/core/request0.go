@@ -8,6 +8,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type Request0[R any] interface {
+	Call(id string, responseChannel chan *R, errorChannel chan error)
+	Notify()
+}
+
 // zero arg request
 type HttpRequest0[R any] struct {
 	*HttpRequest

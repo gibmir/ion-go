@@ -11,7 +11,7 @@ func (s *Schema) String() string {
 }
 
 type Namespace struct {
-	SchemaElement *SchemaElement
+	*SchemaElement
 	Procedures    []Procedure
 	Types         map[string]TypeDeclaration
 }
@@ -21,7 +21,7 @@ func (n *Namespace) String() string {
 }
 
 type Procedure struct {
-	SchemaElement *SchemaElement
+	*SchemaElement
 	ArgumentTypes []PropertyType
 	ReturnType    *PropertyType
 }
@@ -31,8 +31,8 @@ func (p *Procedure) String() string {
 }
 
 type PropertyType struct {
+	*SchemaElement
 	TypeName      string
-	SchemaElement *SchemaElement
 }
 
 func (p *PropertyType) String() string {

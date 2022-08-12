@@ -53,12 +53,4 @@ func TestGenerateTypesTemplate_Success(t *testing.T) {
 	})
 	fmt.Print(b.String())
 	a.Equal("", b.String())
-	//	var schema *schema.Schema = nil
-	//	for i := 0; i < len(schema.Namespaces); i++ {
-	//		namespace := schema.Namespaces[i]
-	//		temp := template.Must(template.New("").Parse(tpl))
-	//		b := bytes.NewBufferString("")
-	//		temp.Execute(b, namespace)
-	//		a.Equal("", b.String())
-	//	}
 }

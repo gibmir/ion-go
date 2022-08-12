@@ -7,6 +7,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type Request1[T, R any] interface {
+	PositionalCall(id string, argument T, responseChannel chan *R, errorChannel chan error)
+	PositionalNotification(argument T)
+}
+
 //one arg requets
 type HttpRequest1[T, R any] struct {
 	*HttpRequest
