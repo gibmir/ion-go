@@ -2,14 +2,16 @@ package core
 
 import (
 	"fmt"
+
 	"github.com/gibmir/ion-go/api/dto"
 
 	"encoding/json"
+
 	"github.com/sirupsen/logrus"
 )
 
 type Request0[R any] interface {
-	Call(id string, responseChannel chan *R, errorChannel chan error)
+	Call(id string, responseChannel chan<- *R, errorChannel chan<- error)
 	Notify()
 }
 
@@ -18,8 +20,8 @@ type HttpRequest0[R any] struct {
 	*HttpRequest
 }
 
-func (r *HttpRequest0[R]) Call(id string, responseChannel chan *R, errorChannel chan error) {
-	go func(id string, responseChannel chan *R, errorChannel chan error) {
+func (r *HttpRequest0[R]) Call(id string, responseChannel chan<- *R, errorChannel chan<- error) {
+	go func(id string, responseChannel chan<- *R, errorChannel chan<- error) {
 		//prepare request
 		request := dto.PositionalRequest{
 			Request: &dto.Request{
