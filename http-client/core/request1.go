@@ -3,12 +3,13 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/gibmir/ion-go/api/dto"
 	"github.com/sirupsen/logrus"
 )
 
 type Request1[T, R any] interface {
-	PositionalCall(id string, argument T, responseChannel chan *R, errorChannel chan error)
+	PositionalCall(id string, argument T, responseChannel chan<- *R, errorChannel chan<- error)
 	PositionalNotification(argument T)
 }
 
@@ -17,8 +18,8 @@ type HttpRequest1[T, R any] struct {
 	*HttpRequest
 }
 
-func (r *HttpRequest1[T, R]) PositionalCall(id string, argument T, responseChannel chan *R, errorChannel chan error) {
-	go func(id string, argument T, responseChannel chan *R, errorChannel chan error) {
+func (r *HttpRequest1[T, R]) PositionalCall(id string, argument T, responseChannel chan<- *R, errorChannel chan<- error) {
+	go func(id string, argument T, responseChannel chan<- *R, errorChannel chan<- error) {
 		defer close(responseChannel)
 		defer close(errorChannel)
 

@@ -9,7 +9,7 @@ import (
 )
 
 type Request2[T1, T2, R any] interface {
-	PositionalCall(id string, firstArgument T1, secondArgument T2, responseChannel chan *R, errorChannel chan error)
+	PositionalCall(id string, firstArgument T1, secondArgument T2, responseChannel chan<- *R, errorChannel chan<- error)
 	PositionalNotification(firstArgument T1, secondArgument T2)
 }
 
@@ -18,8 +18,8 @@ type HttpRequest2[T1, T2, R any] struct {
 	*HttpRequest
 }
 
-func (r *HttpRequest2[T1, T2, R]) PositionalCall(id string, firstArgument T1, secondArgument T2, responseChannel chan *R, errorChannel chan error) {
-	go func(id string, firstArgument T1, secondArgument T2, responseChannel chan *R, errorChannel chan error) {
+func (r *HttpRequest2[T1, T2, R]) PositionalCall(id string, firstArgument T1, secondArgument T2, responseChannel chan<- *R, errorChannel chan<- error) {
+	go func(id string, firstArgument T1, secondArgument T2, responseChannel chan<- *R, errorChannel chan<- error) {
 		defer close(responseChannel)
 		defer close(errorChannel)
 
