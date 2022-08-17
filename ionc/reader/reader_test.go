@@ -251,7 +251,7 @@ func TestReadNamespaces_Smoke(t *testing.T) {
 			proceduresKey: map[string]interface{}{
 				testProcedureName: map[string]interface{}{
 					descriptionKey: testProcedureDescription,
-					idKey: testProcedureId,
+					idKey:          testProcedureId,
 					argumentsKey: map[string]interface{}{
 						testProcedureArgumentName: map[string]interface{}{
 							typeKey:        testProcedureArgumentType,
@@ -273,7 +273,7 @@ func TestReadNamespaces_Smoke(t *testing.T) {
 	a.NotNil(namespaces)
 	a.Equal(1, len(namespaces))
 	//types
-	types:= namespaces[0].Types
+	types := namespaces[0].Types
 	a.NotNil(types[testTypeName])
 	testType := types[testTypeName]
 	a.Equal(defaultId, testType.SchemaElement.Id)
@@ -282,9 +282,9 @@ func TestReadNamespaces_Smoke(t *testing.T) {
 	a.Equal(1, len(testType.PropertyTypes))
 	a.NotNil(testType.PropertyTypes[0])
 	a.Equal(testTypePropertyType, testType.PropertyTypes[0].TypeName)
-	a.Equal(testTypePropertyId, testType.PropertyTypes[0].SchemaElement.Id)
-	a.Equal(testTypePropertyName, testType.PropertyTypes[0].SchemaElement.Name)
-	a.Equal(testTypePropertyDescription, testType.PropertyTypes[0].SchemaElement.Description)
+	a.Equal(testTypePropertyId, testType.PropertyTypes[0].Id)
+	a.Equal(testTypePropertyName, testType.PropertyTypes[0].Name)
+	a.Equal(testTypePropertyDescription, testType.PropertyTypes[0].Description)
 	//parameters
 	a.Equal(1, len(testType.TypeParameters))
 	a.NotNil(testType.TypeParameters[0])
@@ -293,23 +293,23 @@ func TestReadNamespaces_Smoke(t *testing.T) {
 	a.Equal(testParameterDescription, testType.TypeParameters[0].SchemaElement.Description)
 	//procedures
 
-	procedures:=	namespaces[0].Procedures
+	procedures := namespaces[0].Procedures
 	a.Equal(1, len(procedures))
 	//procedure
-	a.Equal(testProcedureName, procedures[0].SchemaElement.Name)
-	a.Equal(testProcedureId, procedures[0].SchemaElement.Id)
-	a.Equal(testProcedureDescription, procedures[0].SchemaElement.Description)
+	a.Equal(testProcedureName, procedures[0].Name)
+	a.Equal(testProcedureId, procedures[0].Id)
+	a.Equal(testProcedureDescription, procedures[0].Description)
 	//arguments
 	a.Equal(1, len(procedures[0].ArgumentTypes))
 	a.Equal(testProcedureArgumentType, procedures[0].ArgumentTypes[0].TypeName)
-	a.Equal(defaultId, procedures[0].ArgumentTypes[0].SchemaElement.Id)
-	a.Equal(testProcedureArgumentDescription, procedures[0].ArgumentTypes[0].SchemaElement.Description)
-	a.Equal(testProcedureArgumentName, procedures[0].ArgumentTypes[0].SchemaElement.Name)
+	a.Equal(defaultId, procedures[0].ArgumentTypes[0].Id)
+	a.Equal(testProcedureArgumentDescription, procedures[0].ArgumentTypes[0].Description)
+	a.Equal(testProcedureArgumentName, procedures[0].ArgumentTypes[0].Name)
 	// return type
 	a.Equal(testReturnArgumentType, procedures[0].ReturnType.TypeName)
-	a.Equal(testReturnArgumentDescription, procedures[0].ReturnType.SchemaElement.Description)
-	a.Equal(returnTypeName, procedures[0].ReturnType.SchemaElement.Name)
-	a.Equal(defaultId, procedures[0].ReturnType.SchemaElement.Id)
+	a.Equal(testReturnArgumentDescription, procedures[0].ReturnType.Description)
+	a.Equal(returnTypeName, procedures[0].ReturnType.Name)
+	a.Equal(defaultId, procedures[0].ReturnType.Id)
 }
 
 func TestReadTypes_Smoke(t *testing.T) {
@@ -344,9 +344,9 @@ func TestReadTypes_Smoke(t *testing.T) {
 	a.Equal(1, len(testType.PropertyTypes))
 	a.NotNil(testType.PropertyTypes[0])
 	a.Equal(testTypePropertyType, testType.PropertyTypes[0].TypeName)
-	a.Equal(testTypePropertyId, testType.PropertyTypes[0].SchemaElement.Id)
-	a.Equal(testTypePropertyName, testType.PropertyTypes[0].SchemaElement.Name)
-	a.Equal(testTypePropertyDescription, testType.PropertyTypes[0].SchemaElement.Description)
+	a.Equal(testTypePropertyId, testType.PropertyTypes[0].Id)
+	a.Equal(testTypePropertyName, testType.PropertyTypes[0].Name)
+	a.Equal(testTypePropertyDescription, testType.PropertyTypes[0].Description)
 	//parameters
 	a.Equal(1, len(testType.TypeParameters))
 	a.NotNil(testType.TypeParameters[0])
@@ -380,18 +380,18 @@ func TestReadProcedures_Success(t *testing.T) {
 	a.NotNil(procedures)
 	a.Equal(1, len(procedures))
 	//procedure
-	a.Equal(testProcedureName, procedures[0].SchemaElement.Name)
-	a.Equal(testProcedureId, procedures[0].SchemaElement.Id)
-	a.Equal(testProcedureDescription, procedures[0].SchemaElement.Description)
+	a.Equal(testProcedureName, procedures[0].Name)
+	a.Equal(testProcedureId, procedures[0].Id)
+	a.Equal(testProcedureDescription, procedures[0].Description)
 	//arguments
 	a.Equal(1, len(procedures[0].ArgumentTypes))
 	a.Equal(testProcedureArgumentType, procedures[0].ArgumentTypes[0].TypeName)
-	a.Equal(defaultId, procedures[0].ArgumentTypes[0].SchemaElement.Id)
-	a.Equal(testProcedureArgumentDescription, procedures[0].ArgumentTypes[0].SchemaElement.Description)
-	a.Equal(testProcedureArgumentName, procedures[0].ArgumentTypes[0].SchemaElement.Name)
+	a.Equal(defaultId, procedures[0].ArgumentTypes[0].Id)
+	a.Equal(testProcedureArgumentDescription, procedures[0].ArgumentTypes[0].Description)
+	a.Equal(testProcedureArgumentName, procedures[0].ArgumentTypes[0].Name)
 	// return type
 	a.Equal(testReturnArgumentType, procedures[0].ReturnType.TypeName)
-	a.Equal(testReturnArgumentDescription, procedures[0].ReturnType.SchemaElement.Description)
-	a.Equal(returnTypeName, procedures[0].ReturnType.SchemaElement.Name)
-	a.Equal(defaultId, procedures[0].ReturnType.SchemaElement.Id)
+	a.Equal(testReturnArgumentDescription, procedures[0].ReturnType.Description)
+	a.Equal(returnTypeName, procedures[0].ReturnType.Name)
+	a.Equal(defaultId, procedures[0].ReturnType.Id)
 }

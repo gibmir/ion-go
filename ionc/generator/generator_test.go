@@ -1,56 +1,58 @@
 package generator
 
 import (
-	//"bytes"
-	"bytes"
-	"fmt"
+	"strings"
 	"testing"
-	"text/template"
-
-	//"text/template"
 
 	schema "github.com/gibmir/ion-go/schema/core"
 	"github.com/stretchr/testify/assert"
 )
 
-const tpl = `package {{ .PackageName }}
+const (
+	testProcedureName                  = "testProcedureName"
+	testProcedureDescription           = "test procedure description"
+	testProcedureArgumentName          = "testArgumentName"
+	testProcedureArgumentDescription   = "test argument description"
+	testProcedureArgumentTypeName      = "testArgumentType"
+	testProcedureReturnTypeDescription = "test return type description"
+	testProcedureReturnTypeTypeName    = "testReturnTypeTypeName"
+)
 
-func (o {{ .StructName }}) ShallowCopy() {{ .StructName }} {
-	return {{ .StructName }}{
-		{{- range $field := .Fields }}
-		{{ $field }}: o.{{ $field }},
-		{{- end }}
-	}
-}
-`
-
-const testTemplate = `
-//{{ .Namespace.Description }}
-package {{ .Namespace.Name }}
-
-{{- range $procedure := .Namespace.Procedures}}
-type $procedure.Name struct {
-}
-{{- end }}
-`
-
-func TestGenerateTypesTemplate_Success(t *testing.T) {
+func TestGenerateProcedure_OneArg_Success(t *testing.T) {
 	a := assert.New(t)
-	b := bytes.NewBufferString("")
-	template.Must(template.New("").Parse(testTemplate)).Execute(b, schema.Namespace{
+	testStringBuilder := strings.Builder{}
+
+	p := schema.Procedure{
 		SchemaElement: &schema.SchemaElement{
-			Name:        "testNamespaceName",
-			Description: "testNamespaceDescription",
+			Name:        testProcedureName,
+			Description: testProcedureDescription,
 		},
-		Procedures: []schema.Procedure{
+		ArgumentTypes: []schema.PropertyType{
 			{
 				SchemaElement: &schema.SchemaElement{
-					Name:        "testProcedureName",
-					Description: "testProcedureDescription",
+					Name:        testProcedureArgumentName,
+					Description: testProcedureArgumentDescription,
 				},
+				TypeName: testProcedureArgumentTypeName,
 			},
 		},
-	})
-	fmt.Print(b.String())
-	a.Equal("", b.String())
+		ReturnType: &schema.PropertyType{
+			SchemaElement: &schema.SchemaElement{
+				Description: testProcedureReturnTypeDescription,
+			},
+			TypeName: testProcedureReturnTypeTypeName,
+		},
+	}
+	generateProcedure(&testStringBuilder, &p)
+	result := testStringBuilder.String()
+
+	a.Contains(result, testProcedureName)
+	a.Contains(result, testProcedureDescription)
+	//argument
+	a.Contains(result, testProcedureArgumentName)
+	a.Contains(result, testProcedureArgumentDescription)
+	a.Contains(result, testProcedureArgumentTypeName)
+	//return type
+	a.Contains(result, testProcedureReturnTypeDescription)
+	a.Contains(result, testProcedureReturnTypeTypeName)
 }

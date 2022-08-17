@@ -12,12 +12,13 @@ func (s *Schema) String() string {
 
 type Namespace struct {
 	*SchemaElement
-	Procedures    []Procedure
-	Types         map[string]TypeDeclaration
+	Procedures []Procedure
+	Types      map[string]TypeDeclaration
 }
 
 func (n *Namespace) String() string {
-	return fmt.Sprintf("Namespace(SchemaElement: %v, Procedures: %v, Types: %v)", n.SchemaElement, n.Procedures, n.Types)
+	return fmt.Sprintf("Namespace(SchemaElement: %v, Procedures: %v, Types: %v)",
+		n.SchemaElement, n.Procedures, n.Types)
 }
 
 type Procedure struct {
@@ -27,16 +28,18 @@ type Procedure struct {
 }
 
 func (p *Procedure) String() string {
-	return fmt.Sprintf("Procedure(SchemaElement: %v, ArgumentTypes: %v, ReturnType: %v)", p.SchemaElement, p.ArgumentTypes, p.ReturnType)
+	return fmt.Sprintf("Procedure(SchemaElement: %v, ArgumentTypes: %v, ReturnType: %v)",
+		p.SchemaElement, p.ArgumentTypes, p.ReturnType)
 }
 
 type PropertyType struct {
 	*SchemaElement
-	TypeName      string
+	TypeName string
 }
 
 func (p *PropertyType) String() string {
-	return fmt.Sprintf("PropertyType(TypeName:%v, SchemaElement:%v)", p.TypeName, p.SchemaElement)
+	return fmt.Sprintf("PropertyType(TypeName:%v, SchemaElement:%v)",
+		p.TypeName, p.SchemaElement)
 }
 
 type TypeParameter struct {
@@ -54,7 +57,8 @@ type TypeDeclaration struct {
 }
 
 func (t *TypeDeclaration) String() string {
-	return fmt.Sprintf("TypeDeclaration(PropertyTypes: %v, TypeParameters: %v, SchemaElement: %v)", t.PropertyTypes, t.TypeParameters, t.SchemaElement)
+	return fmt.Sprintf("TypeDeclaration(PropertyTypes: %v, TypeParameters: %v, SchemaElement: %v)",
+		t.PropertyTypes, t.TypeParameters, t.SchemaElement)
 }
 
 type SchemaElement struct {
@@ -64,5 +68,6 @@ type SchemaElement struct {
 }
 
 func (s *SchemaElement) String() string {
-	return fmt.Sprintf("SchemaElement(Id:%v, Name:%v, Description:%v)", s.Id, s.Name, s.Description)
+	return fmt.Sprintf("SchemaElement(Id:%v, Name:%v, Description:%v)",
+		s.Id, s.Name, s.Description)
 }
