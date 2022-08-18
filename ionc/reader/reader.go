@@ -87,8 +87,8 @@ func readNamespace(namespaceName string, namespaceDefinitionMap map[string]inter
 	}, nil
 }
 
-func readTypes(typesMap map[string]interface{}) (map[string]schema.TypeDeclaration, error) {
-	types := make(map[string]schema.TypeDeclaration)
+func readTypes(typesMap map[string]interface{}) ([]schema.TypeDeclaration, error) {
+	types := []schema.TypeDeclaration{}
 	for typeName, definition := range typesMap {
 		definitionMap := definition.(map[string]interface{})
 		typeDeclaration := schema.TypeDeclaration{
@@ -100,7 +100,7 @@ func readTypes(typesMap map[string]interface{}) (map[string]schema.TypeDeclarati
 			PropertyTypes:  readProperties(definitionMap),
 			TypeParameters: readParametrization(definitionMap),
 		}
-		types[typeName] = typeDeclaration
+		types = append(types, typeDeclaration)
 	}
 	return types, nil
 }

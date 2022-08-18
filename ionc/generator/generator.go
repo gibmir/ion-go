@@ -37,11 +37,28 @@ type {{.Name}} interface {
   Notify()
 }
 `
+
+	simpleTypeTemplateText = `
+//{{.Name}} {{.Description}}
+type {{.Name}} struct {
+  {{range $property:=.PropertyTypes}}
+    //{{$property.Name}} {{$property.Description}}
+    {{$property.Name}} {{$property.TypeName}},
+  {{end}}
+}
+`
 )
 
 var (
-	zeroArgumentProcedureTemplate     *template.Template = template.Must(template.New("zero-arg").Parse(zeroArgumentProcedureTemplateText))
-	multipleArgumentProcedureTemplate *template.Template = template.Must(template.New("multiple-arg").Parse(multipleArgumentsTemplateText))
+	zeroArgumentProcedureTemplate *template.Template = template.Must(template.
+					New("zero-arg").
+					Parse(zeroArgumentProcedureTemplateText))
+	multipleArgumentProcedureTemplate *template.Template = template.Must(template.
+						New("multiple-arg").
+						Parse(multipleArgumentsTemplateText))
+	simpleTypeTemplate *template.Template = template.Must(template.
+				New("simple-type").
+				Parse(simpleTypeTemplateText))
 )
 
 func GenerateTemplate(apiSchema *schema.Schema) ([]string, error) {
@@ -70,13 +87,35 @@ func generateNamespace(namespace *schema.Namespace) (string, error) {
 	stringBuilder.WriteString(fmt.Sprintf(`// %s`, namespace.Description))
 	stringBuilder.WriteString(fmt.Sprintf("package %s\n", namespace.Name))
 	var err error
-	for i := 0; i < len(namespace.Procedures); i++ {
-		err = generateProcedure(&stringBuilder, &namespace.Procedures[i])
+	for _, procedure := range namespace.Procedures {
+		err = generateProcedure(&stringBuilder, &procedure)
+		if err != nil {
+			return "", err
+		}
+	}
+	for _, typeDeclaration := range namespace.Types {
+		err = generateType(&stringBuilder, &typeDeclaration)
 		if err != nil {
 			return "", err
 		}
 	}
 	return stringBuilder.String(), nil
+}
+
+func generateType(stringBuilder *strings.Builder, typeDeclaration *schema.TypeDeclaration) error {
+	if stringBuilder == nil {
+		return fmt.Errorf("stringbuilder is nil")
+	}
+	if typeDeclaration == nil {
+		return fmt.Errorf("type declaration is nil")
+	}
+	if len(typeDeclaration.TypeParameters) == 0 {
+		err := simpleTypeTemplate.Execute(stringBuilder, typeDeclaration)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func generateProcedure(stringBuilder *strings.Builder, procedure *schema.Procedure) error {
@@ -99,27 +138,5 @@ func generateProcedure(stringBuilder *strings.Builder, procedure *schema.Procedu
 		}
 
 	}
-	return nil
-}
-
-func isGenericProcedure(procedure schema.Procedure) bool {
-	if isGenericType(procedure.ReturnType.TypeName) {
-		return true
-	}
-	argumentTypes := procedure.ArgumentTypes
-	for _, argumentType := range argumentTypes {
-		if isGenericType(argumentType.TypeName) {
-			return true
-		}
-	}
-	return false
-}
-
-func isGenericType(typeName string) bool {
-	return strings.Contains(typeName, genericMarkSymbol)
-
-}
-
-func generateTypesTemplate(apiTypes map[string]schema.TypeDeclaration) *template.Template {
 	return nil
 }

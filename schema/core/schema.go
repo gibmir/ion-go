@@ -13,7 +13,7 @@ func (s *Schema) String() string {
 type Namespace struct {
 	*SchemaElement
 	Procedures []Procedure
-	Types      map[string]TypeDeclaration
+	Types      []TypeDeclaration
 }
 
 func (n *Namespace) String() string {
@@ -51,9 +51,9 @@ func (t *TypeParameter) String() string {
 }
 
 type TypeDeclaration struct {
+	*SchemaElement
 	PropertyTypes  []PropertyType
 	TypeParameters []TypeParameter
-	SchemaElement  *SchemaElement
 }
 
 func (t *TypeDeclaration) String() string {

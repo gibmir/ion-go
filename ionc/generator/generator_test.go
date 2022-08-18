@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	// procedures
 	testProcedureName                  = "testProcedureName"
 	testProcedureDescription           = "test procedure description"
 	testProcedureArgumentName          = "testArgumentName"
@@ -16,6 +17,12 @@ const (
 	testProcedureArgumentTypeName      = "testArgumentType"
 	testProcedureReturnTypeDescription = "test return type description"
 	testProcedureReturnTypeTypeName    = "testReturnTypeTypeName"
+	// types
+	testTypeName                = "testTypeName"
+	testTypeDescription         = "test type description"
+	testPropertyTypeName        = "testPropertyTypeName"
+	testPropertyTypeDescription = "test property type description"
+	testPropertyTypeTypeName    = "testPropertyTypeTypeName"
 )
 
 func TestGenerateProcedure_OneArg_Success(t *testing.T) {
@@ -43,9 +50,11 @@ func TestGenerateProcedure_OneArg_Success(t *testing.T) {
 			TypeName: testProcedureReturnTypeTypeName,
 		},
 	}
-	generateProcedure(&testStringBuilder, &p)
-	result := testStringBuilder.String()
+	err := generateProcedure(&testStringBuilder, &p)
 
+	a.Nil(err)
+
+	result := testStringBuilder.String()
 	a.Contains(result, testProcedureName)
 	a.Contains(result, testProcedureDescription)
 	//argument
@@ -55,4 +64,37 @@ func TestGenerateProcedure_OneArg_Success(t *testing.T) {
 	//return type
 	a.Contains(result, testProcedureReturnTypeDescription)
 	a.Contains(result, testProcedureReturnTypeTypeName)
+}
+
+func TestGenerateType_Simple_OneProperty_Success(t *testing.T) {
+	a := assert.New(t)
+	testStringBuilder := strings.Builder{}
+
+	td := schema.TypeDeclaration{
+		SchemaElement: &schema.SchemaElement{
+			Name:        testTypeName,
+			Description: testTypeDescription,
+		},
+		PropertyTypes: []schema.PropertyType{
+			{
+				SchemaElement: &schema.SchemaElement{
+					Name:        testPropertyTypeName,
+					Description: testPropertyTypeDescription,
+				},
+				TypeName: testPropertyTypeTypeName,
+			},
+		},
+	}
+
+	err := generateType(&testStringBuilder, &td)
+	a.Nil(err)
+
+	result := testStringBuilder.String()
+
+	a.Contains(result, testTypeName)
+	a.Contains(result, testTypeDescription)
+	//properties
+	a.Contains(result, testPropertyTypeName)
+	a.Contains(result, testPropertyTypeDescription)
+	a.Contains(result, testPropertyTypeTypeName)
 }
