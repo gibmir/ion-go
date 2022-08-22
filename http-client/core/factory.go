@@ -23,15 +23,18 @@ func NewHttpRequestFactory(config *configuration.Configuration) *HttpRequestFact
 	}
 }
 
-func NewRequest0[R any](factory *HttpRequestFactory, procedure api.JsonRemoteProcedure0[R]) (Request0[R], error) {
+func NewRequest0[R any](
+	factory *HttpRequestFactory,
+	procedure *api.Describer0[R],
+) (Request0[R], error) {
 	if factory == nil || procedure == nil {
 		return nil, errors.New("factory or procedure are nil")
 	}
 
-	procedureDescriptor := procedure.Describe()
+	procedureDescription := procedure.Describe()
 	request := HttpRequest0[R]{
 		HttpRequest: &HttpRequest{
-			methodName: procedureDescriptor.ProcedureName,
+			methodName: procedureDescription.ProcedureName,
 			httpSender: &HttpSender{
 				bufferPool: factory.bufferPool,
 				httpClient: factory.httpClient,
@@ -42,7 +45,10 @@ func NewRequest0[R any](factory *HttpRequestFactory, procedure api.JsonRemotePro
 	return &request, nil
 }
 
-func NewRequest1[T, R any](factory *HttpRequestFactory, procedure api.JsonRemoteProcedure1[T, R]) (Request1[T, R], error) {
+func NewRequest1[T, R any](
+	factory *HttpRequestFactory,
+	procedure *api.Describer1[T, R],
+) (Request1[T, R], error) {
 	if factory == nil || procedure == nil {
 		return nil, errors.New("factory or procedure are nil")
 	}
@@ -60,7 +66,10 @@ func NewRequest1[T, R any](factory *HttpRequestFactory, procedure api.JsonRemote
 	return &request, nil
 }
 
-func NewRequest2[T1, T2, R any](factory *HttpRequestFactory, procedure api.JsonRemoteProcedure2[T1, T2, R]) (Request2[T1, T2, R], error) {
+func NewRequest2[T1, T2, R any](
+	factory *HttpRequestFactory,
+	procedure *api.Describer2[T1, T2, R],
+) (Request2[T1, T2, R], error) {
 	if factory == nil || procedure == nil {
 		return nil, errors.New("factory or procedure are nil")
 	}
@@ -78,7 +87,10 @@ func NewRequest2[T1, T2, R any](factory *HttpRequestFactory, procedure api.JsonR
 	return &request, nil
 }
 
-func NewRequest3[T1, T2, T3, R any](factory *HttpRequestFactory, procedure api.JsonRemoteProcedure3[T1, T2, T3, R]) (Request3[T1, T2, T3, R], error) {
+func NewRequest3[T1, T2, T3, R any](
+	factory *HttpRequestFactory,
+	procedure *api.Describer3[T1, T2, T3, R],
+) (Request3[T1, T2, T3, R], error) {
 	if factory == nil || procedure == nil {
 		return nil, errors.New("factory or procedure are nil")
 	}

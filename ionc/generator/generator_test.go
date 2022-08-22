@@ -56,13 +56,10 @@ func TestGenerateProcedure_OneArg_Success(t *testing.T) {
 
 	result := testStringBuilder.String()
 	a.Contains(result, testProcedureName)
-	a.Contains(result, testProcedureDescription)
 	//argument
 	a.Contains(result, testProcedureArgumentName)
-	a.Contains(result, testProcedureArgumentDescription)
 	a.Contains(result, testProcedureArgumentTypeName)
 	//return type
-	a.Contains(result, testProcedureReturnTypeDescription)
 	a.Contains(result, testProcedureReturnTypeTypeName)
 }
 

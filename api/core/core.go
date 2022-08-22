@@ -1,34 +1,40 @@
 package core
 
-type JsonRemoteProcedure0[R any] interface {
-	Describer
-	Call() R
-	Notify()
-}
-
-type JsonRemoteProcedure1[T, R any] interface {
-	Describer
-	PositionalCall(arg T) R
-	NamedCall(arg T) R
-}
-
-type JsonRemoteProcedure2[T1, T2, R any] interface {
-	Describer
-	PositionalCall(arg1 T1, arg2 T2) R
-	NamedCall(arg1 T1, arg2 T2) R
-}
-
-type JsonRemoteProcedure3[T1, T2, T3, R any] interface {
-	Describer
-	PositionalCall(arg1 T1, arg2 T2, arg3 T3) R
-	NamedCall(arg1 T1, arg2 T2, arg3 T3) R
-}
-
 type ProcedureDescription struct {
 	ProcedureName string
 	ArgNames      []string
 }
 
-type Describer interface {
-	Describe() *ProcedureDescription
+type Type[T any] struct {
+}
+
+type Describer0[R any] struct {
+	*Describer
+	ReturnType *Type[R]
+}
+
+type Describer1[T, R any] struct {
+	FirstArgument *Type[T]
+	*Describer0[R]
+}
+
+type Describer2[T1, T2, R any] struct {
+	FirstArgument  *Type[T1]
+	SecondArgument *Type[T2]
+	*Describer0[R]
+}
+
+type Describer3[T1, T2, T3, R any] struct {
+	FirstArgument  *Type[T1]
+	SecondArgument *Type[T2]
+	ThirdArgument  *Type[T3]
+	*Describer0[R]
+}
+
+type Describer struct {
+	Description *ProcedureDescription
+}
+
+func (d *Describer) Describe() *ProcedureDescription {
+	return d.Description
 }
