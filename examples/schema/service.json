@@ -1,0 +1,30 @@
+{
+  "organization":{
+  "types": {
+    "testComposedType": {
+      "description": "composed type",
+      "properties": {
+        "numericProperty": {
+          "type": "number",
+          "description": "numeric property"
+        }
+      }
+    }
+  },
+  "procedures": {
+    "testProcedure": {
+      "description": "This is test procedure",
+      "arguments": {
+        "testComposedArgument": {
+          "type": "testComposedType",
+          "description": "test composed argument"
+        }
+      },
+      "return": {
+        "type": "string",
+        "description": "test return argument"
+      }
+    }
+  }
+  }
+}
