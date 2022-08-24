@@ -8,7 +8,7 @@ import (
 
 func TestGenerate(t *testing.T) {
 	hrf := HttpRequestFactory{}
-	d := core.Describer0[string]{
+	var d = core.Describer0[string]{
 		ReturnType: &core.Type[string]{},
 
 		Describer: &core.Describer{

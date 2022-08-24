@@ -8,7 +8,7 @@ const (
 	ErrorKey        = "error"
 )
 
-// Positional/named Response
+// Response represents json-rpc 2.0 response.
 type Response[R any] struct {
 	Id       string `json:"id"`
 	Protocol string `json:"jsonrpc"`
@@ -24,4 +24,3 @@ type Error struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
-

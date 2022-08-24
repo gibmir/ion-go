@@ -153,7 +153,7 @@ func generateProcedure0(stringBuilder *strings.Builder, procedure *schema.Proced
 
 func generateProcedure1(stringBuilder *strings.Builder, procedure *schema.Procedure) {
 	procedureDescriber := fmt.Sprintf(`
-%s := Describer1[%s, %s]{
+%s := api.Describer1[%s, %s]{
   FirstArgument: &api.Type[%s]{},
   Describer0: &api.Describer0[%s]{
     ReturnType: &api.Type[%s]{},
@@ -176,7 +176,7 @@ func generateProcedure1(stringBuilder *strings.Builder, procedure *schema.Proced
 
 func generateProcedure2(stringBuilder *strings.Builder, procedure *schema.Procedure) {
 	procedureDescriber := fmt.Sprintf(`
-%s := Describer2[%s, %s, %s]{
+%s := api.Describer2[%s, %s, %s]{
   FirstArgument: &api.Type[%s]{},
   SecondArgument: &api.Type[%s]{},
   Describer0: &api.Describer0[%s]{
@@ -203,7 +203,7 @@ func generateProcedure2(stringBuilder *strings.Builder, procedure *schema.Proced
 
 func generateProcedure3(stringBuilder *strings.Builder, procedure *schema.Procedure) {
 	procedureDescriber := fmt.Sprintf(`
-%s := Describer3[%s, %s, %s,%s]{
+%s := api.Describer3[%s, %s, %s,%s]{
   FirstArgument: &api.Type[%s]{},
   SecondArgument: &api.Type[%s]{},
   ThirdArgument: &api.Type[%s]{},

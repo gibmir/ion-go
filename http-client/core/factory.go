@@ -54,6 +54,7 @@ func NewRequest1[T, R any](
 	}
 	procedureDescription := procedure.Describe()
 	request := HttpRequest1[T, R]{
+		ArgumentName: procedureDescription.ArgNames[0],
 		HttpRequest: &HttpRequest{
 			methodName: procedureDescription.ProcedureName,
 			httpSender: &HttpSender{
@@ -75,6 +76,8 @@ func NewRequest2[T1, T2, R any](
 	}
 	procedureDescription := procedure.Describe()
 	request := HttpRequest2[T1, T2, R]{
+		FirstArgumentName:  procedureDescription.ArgNames[0],
+		SecondArgumentName: procedureDescription.ArgNames[1],
 		HttpRequest: &HttpRequest{
 			methodName: procedureDescription.ProcedureName,
 			httpSender: &HttpSender{
@@ -96,6 +99,9 @@ func NewRequest3[T1, T2, T3, R any](
 	}
 	procedureDescription := procedure.Describe()
 	request := HttpRequest3[T1, T2, T3, R]{
+		FirstArgumentName:  procedureDescription.ArgNames[0],
+		SecondArgumentName: procedureDescription.ArgNames[1],
+		ThirdArgumentName:  procedureDescription.ArgNames[2],
 		HttpRequest: &HttpRequest{
 			methodName: procedureDescription.ProcedureName,
 			httpSender: &HttpSender{

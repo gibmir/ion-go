@@ -23,7 +23,7 @@ type HttpRequest0[R any] struct {
 func (r *HttpRequest0[R]) Call(id string, responseChannel chan<- *R, errorChannel chan<- error) {
 	go func(id string, responseChannel chan<- *R, errorChannel chan<- error) {
 		//prepare request
-		request := dto.PositionalRequest{
+		request := dto.Positional{
 			Request: &dto.Request{
 				Id:       id,
 				Method:   r.methodName,
@@ -61,7 +61,7 @@ func (r *HttpRequest0[R]) Call(id string, responseChannel chan<- *R, errorChanne
 func (r *HttpRequest0[R]) Notify() {
 	go func() {
 		//prepare notification
-		request := dto.PositionalRequest{
+		request := dto.Positional{
 			Request: &dto.Request{
 				Method:   r.methodName,
 				Protocol: dto.DefaultJsonRpcProtocolVersion,

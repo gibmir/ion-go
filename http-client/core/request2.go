@@ -15,6 +15,8 @@ type Request2[T1, T2, R any] interface {
 
 //two arg request
 type HttpRequest2[T1, T2, R any] struct {
+	FirstArgumentName  string
+	SecondArgumentName string
 	*HttpRequest
 }
 
@@ -23,7 +25,7 @@ func (r *HttpRequest2[T1, T2, R]) PositionalCall(id string, firstArgument T1, se
 		defer close(responseChannel)
 		defer close(errorChannel)
 
-		request := dto.PositionalRequest{
+		request := dto.Positional{
 			Parameters: []interface{}{firstArgument, secondArgument},
 			Request: &dto.Request{
 				Id:       id,
@@ -63,7 +65,7 @@ func (r *HttpRequest2[T1, T2, R]) PositionalCall(id string, firstArgument T1, se
 func (r *HttpRequest2[T1, T2, R]) PositionalNotification(firstArgument T1, secondArgument T2) {
 	go func(firstArgument T1, secondArgument T2) {
 		//prepare notification
-		request := dto.PositionalRequest{
+		request := dto.Positional{
 			Parameters: []interface{}{firstArgument, secondArgument},
 			Request: &dto.Request{
 				Method:   r.methodName,
