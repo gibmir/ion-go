@@ -16,7 +16,7 @@
         "description": "This is test procedure",
         "arguments": {
           "testComposedArgument": {
-            "type": "testTypeNumericProperty",
+            "type": "testType",
             "description": "test argument"
           }
         },

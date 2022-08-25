@@ -274,10 +274,11 @@ func TestReadNamespaces_Smoke(t *testing.T) {
 	a.Equal(1, len(namespaces))
 	//types
 	types := namespaces[0].Types
-	a.NotNil(types[testTypeName])
-	testType := types[testTypeName]
-	a.Equal(defaultId, testType.SchemaElement.Id)
-	a.Equal(testTypePropertyDescription, testType.SchemaElement.Description)
+
+	a.NotNil(types[0])
+	testType := types[0]
+	a.Equal(defaultId, testType.Id)
+	a.Equal(testTypePropertyDescription, testType.Description)
 	//properties
 	a.Equal(1, len(testType.PropertyTypes))
 	a.NotNil(testType.PropertyTypes[0])
@@ -336,10 +337,10 @@ func TestReadTypes_Smoke(t *testing.T) {
 	types, err := readTypes(typesMap)
 
 	a.Nil(err)
-	a.NotNil(types[testTypeName])
-	testType := types[testTypeName]
-	a.Equal(defaultId, testType.SchemaElement.Id)
-	a.Equal(testTypePropertyDescription, testType.SchemaElement.Description)
+	a.NotNil(types[0])
+	testType := types[0]
+	a.Equal(defaultId, testType.Id)
+	a.Equal(testTypePropertyDescription, testType.Description)
 	//properties
 	a.Equal(1, len(testType.PropertyTypes))
 	a.NotNil(testType.PropertyTypes[0])
@@ -394,4 +395,50 @@ func TestReadProcedures_Success(t *testing.T) {
 	a.Equal(testReturnArgumentDescription, procedures[0].ReturnType.Description)
 	a.Equal(returnTypeName, procedures[0].ReturnType.Name)
 	a.Equal(defaultId, procedures[0].ReturnType.Id)
+}
+
+func TestReadSchema_Example(t *testing.T) {
+	a := assert.New(t)
+	jsonMap := make(map[string]interface{})
+
+	testExampleJson := `
+{
+  "testingNamespace":{
+    "types": {
+      "testType": {
+        "description": "test type",
+        "properties": {
+          "testTypeNumericProperty": {
+            "type": "number",
+            "description": "numeric property"
+          }
+        }
+      }
+    },
+    "procedures": {
+      "testProcedure": {
+        "description": "This is test procedure",
+        "arguments": {
+          "testComposedArgument": {
+            "type": "testTypeNumericProperty",
+            "description": "test argument"
+          }
+        },
+        "return": {
+          "type": "string",
+          "description": "test return argument"
+        }
+      }
+    }
+  }
+}
+`
+	json.Unmarshal([]byte(testExampleJson), &jsonMap)
+
+	namespaces, err := readNamespaces(jsonMap)
+
+	a.Nil(err)
+	a.Equal(1, len(namespaces))
+	a.Equal("testingNamespace", namespaces[0].Name)
+	a.Equal("testType", namespaces[0].Types[0].Name)
 }

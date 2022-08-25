@@ -2,7 +2,6 @@ package reader
 
 import (
 	"fmt"
-	"strings"
 	"unicode"
 
 	schema "github.com/gibmir/ion-go/schema/core"
@@ -230,33 +229,9 @@ func readType(typeName string) (string, error) {
 	if typeNameLength == 0 {
 		return "", fmt.Errorf("incorrect type. Type can't be empty")
 	}
-
-	var b strings.Builder
-	b.Grow(typeNameLength)
 	typeNameRunes := []rune(typeName)
-
-	_, err := b.WriteRune(unicode.ToUpper(typeNameRunes[0]))
-	if err != nil {
-		return "", fmt.Errorf("first symbol of type [%s] is incorrect. %w", typeName, err)
-	}
-	for i := 1; i < typeNameLength; i++ {
-		if typeNameRunes[i] == schemaStartGenericRune {
-			typeNameRunes[i] = startGenericRune
-		}
-
-		if typeNameRunes[i] == schemaEndGenericRune {
-			typeNameRunes[i] = endGenericRune
-		}
-		if typeNameRunes[i-1] == startGenericRune || typeNameRunes[i-1] == commaRune {
-			typeNameRunes[i] = unicode.ToUpper(typeNameRunes[i])
-		}
-		_, err := b.WriteRune(typeNameRunes[i])
-		if err != nil {
-			return "", fmt.Errorf("[%d] symbol of type [%s] is incorrect. %w",
-				i, typeName, err)
-		}
-	}
-	return b.String(), nil
+	typeNameRunes[0] = unicode.ToUpper(typeNameRunes[0])
+	return string(typeNameRunes), nil
 }
 
 func readString(key, defaultValue string, definition map[string]interface{}) string {
