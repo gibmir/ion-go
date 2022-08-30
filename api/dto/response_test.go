@@ -67,7 +67,6 @@ var _ = Describe("Response", func() {
 		})
 		Context("with incorrect json", func() {
 			It("should be an error(not panic)", func() {
-
 				b := []byte(testIncorrectResponseJson)
 				response := Response[string]{}
 

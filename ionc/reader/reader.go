@@ -88,15 +88,23 @@ func readNamespace(namespaceName string, namespaceDefinitionMap map[string]inter
 
 func readTypes(typesMap map[string]interface{}) ([]schema.TypeDeclaration, error) {
 	types := []schema.TypeDeclaration{}
-	for typeName, definition := range typesMap {
+	for typeNameString, definition := range typesMap {
 		definitionMap := definition.(map[string]interface{})
+		propertyTypes, err := readProperties(definitionMap)
+		if err != nil {
+			return types, err
+		}
+		typeName, err := readTypeName(typeNameString)
+		if err != nil {
+			return types, err
+		}
 		typeDeclaration := schema.TypeDeclaration{
 			SchemaElement: &schema.SchemaElement{
 				Id:          readId(definitionMap),
 				Name:        typeName,
 				Description: readDescription(definitionMap),
 			},
-			PropertyTypes:  readProperties(definitionMap),
+			PropertyTypes:  propertyTypes,
 			TypeParameters: readParametrization(definitionMap),
 		}
 		types = append(types, typeDeclaration)
@@ -104,29 +112,38 @@ func readTypes(typesMap map[string]interface{}) ([]schema.TypeDeclaration, error
 	return types, nil
 }
 
-func readProperties(definitionMap map[string]interface{}) []schema.PropertyType {
+func readProperties(definitionMap map[string]interface{}) ([]schema.PropertyType, error) {
 	properties := definitionMap[propertiesKey]
 	if properties == nil {
-		return make([]schema.PropertyType, 0)
+		return make([]schema.PropertyType, 0), nil
 	}
 	propertiesMap := properties.(map[string]interface{})
 	result := make([]schema.PropertyType, 0, len(propertiesMap))
 	for propertyName, propertyDefinition := range propertiesMap {
 		propertyDefinitionMap := propertyDefinition.(map[string]interface{})
-		result = append(result, readProperty(propertyName, propertyDefinitionMap))
+		propertyType, err := readProperty(propertyName, propertyDefinitionMap)
+		if err != nil {
+			return result, err
+		}
+		result = append(result, *propertyType)
 	}
-	return result
+	return result, nil
 }
 
-func readProperty(propertyName string, propertyDefinition map[string]interface{}) schema.PropertyType {
-	return schema.PropertyType{
-		TypeName: propertyDefinition[typeKey].(string),
+func readProperty(propertyName string, propertyDefinition map[string]interface{}) (*schema.PropertyType, error) {
+	propertyTypeString := propertyDefinition[typeKey].(string)
+	propertyType, err := readTypeName(propertyTypeString)
+	if err != nil {
+		return nil, err
+	}
+	return &schema.PropertyType{
+		TypeName: propertyType,
 		SchemaElement: &schema.SchemaElement{
 			Id:          readId(propertyDefinition),
 			Description: readDescription(propertyDefinition),
 			Name:        propertyName,
 		},
-	}
+	}, nil
 }
 
 func readParametrization(definitionMap map[string]interface{}) []schema.TypeParameter {
@@ -185,12 +202,16 @@ func readProcedureArguments(argumentsMap map[string]interface{}) ([]schema.Prope
 	arguments := make([]schema.PropertyType, 0, len(argumentsMap))
 	for name, definition := range argumentsMap {
 		definitionMap := definition.(map[string]interface{})
-		typeName := definitionMap[typeKey]
-		if typeName == nil {
+		typeNameString := definitionMap[typeKey]
+		if typeNameString == nil {
 			return arguments, fmt.Errorf("type wasn't specified for procedure argument [%s]", name)
 		}
+		typeName, err := readTypeName(typeNameString.(string))
+		if err != nil {
+			return arguments, err
+		}
 		arguments = append(arguments, schema.PropertyType{
-			TypeName: typeName.(string),
+			TypeName: typeName,
 			SchemaElement: &schema.SchemaElement{
 				Name:        name,
 				Id:          readId(definitionMap),
@@ -202,12 +223,16 @@ func readProcedureArguments(argumentsMap map[string]interface{}) ([]schema.Prope
 }
 
 func readReturnType(definition map[string]interface{}) (*schema.PropertyType, error) {
-	typeName := definition[typeKey]
-	if typeName == nil {
+	typeNameString := definition[typeKey]
+	if typeNameString == nil {
 		return nil, fmt.Errorf("return type wasn't specified")
 	}
+	typeName, err := readTypeName(typeNameString.(string))
+	if err != nil {
+		return nil, err
+	}
 	return &schema.PropertyType{
-		TypeName: typeName.(string),
+		TypeName: typeName,
 		SchemaElement: &schema.SchemaElement{
 			Name:        returnTypeName,
 			Id:          readId(definition),
@@ -224,14 +249,29 @@ func readDescription(definition map[string]interface{}) string {
 	return readString(descriptionKey, defaultDescription, definition)
 }
 
-func readType(typeName string) (string, error) {
+func readTypeName(typeName string) (string, error) {
 	typeNameLength := len(typeName)
 	if typeNameLength == 0 {
-		return "", fmt.Errorf("incorrect type. Type can't be empty")
+		return "", fmt.Errorf("incorrect type. Type name can't be empty")
 	}
-	typeNameRunes := []rune(typeName)
-	typeNameRunes[0] = unicode.ToUpper(typeNameRunes[0])
-	return string(typeNameRunes), nil
+	switch typeName {
+	case schema.BooleanType:
+		return "bool", nil
+	case schema.StringType:
+		return "string", nil
+	case schema.IntType:
+		return "int", nil
+	case schema.NumberType:
+		return "float64", nil
+	case schema.ListType:
+		return "", fmt.Errorf("list type currently unsupported")
+	case schema.MapType:
+		return "", fmt.Errorf("map type currentle unsupported")
+	default:
+		typeNameRunes := []rune(typeName)
+		typeNameRunes[0] = unicode.ToUpper(typeNameRunes[0])
+		return string(typeNameRunes), nil
+	}
 }
 
 func readString(key, defaultValue string, definition map[string]interface{}) string {
