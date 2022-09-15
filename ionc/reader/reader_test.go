@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
+	schema "github.com/gibmir/ion-go/schema/core"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -441,4 +443,40 @@ func TestReadSchema_Example(t *testing.T) {
 	a.Equal(1, len(namespaces))
 	a.Equal("testingNamespace", namespaces[0].Name)
 	a.Equal("testType", namespaces[0].Types[0].Name)
+}
+
+func TestReadTypeName_Boolean_Success(t *testing.T) {
+	a := assert.New(t)
+
+	actualTypeName, err := readTypeName(schema.BooleanType)
+
+	a.Nil(err)
+	a.Equal(BoolGolangTypeName, actualTypeName)
+}
+
+func TestReadTypeName_String_Success(t *testing.T) {
+	a := assert.New(t)
+
+	actualTypeName, err := readTypeName(schema.StringType)
+
+	a.Nil(err)
+	a.Equal(StringGolangTypeName, actualTypeName)
+}
+
+func TestReadTypeName_Int_Success(t *testing.T) {
+	a := assert.New(t)
+
+	actualTypeName, err := readTypeName(schema.IntType)
+
+	a.Nil(err)
+	a.Equal(IntGolangTypeName, actualTypeName)
+}
+
+func TestReadTypeName_Number_Success(t *testing.T) {
+	a := assert.New(t)
+
+	actualTypeName, err := readTypeName(schema.NumberType)
+
+	a.Nil(err)
+	a.Equal(Float64GolangTypeName, actualTypeName)
 }

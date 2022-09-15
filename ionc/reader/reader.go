@@ -9,18 +9,22 @@ import (
 )
 
 const (
-	typesKey           string = "types"
-	descriptionKey     string = "description"
-	defaultDescription string = "default description"
-	idKey              string = "id"
-	defaultId          string = "default id"
-	proceduresKey      string = "procedures"
-	returnTypeKey      string = "return"
-	argumentsKey       string = "arguments"
-	propertiesKey      string = "properties"
-	typeKey            string = "type"
-	parametrizationKey string = "parametrization"
-	returnTypeName     string = "return"
+	typesKey              string = "types"
+	descriptionKey        string = "description"
+	defaultDescription    string = "default description"
+	idKey                 string = "id"
+	defaultId             string = "default id"
+	proceduresKey         string = "procedures"
+	returnTypeKey         string = "return"
+	argumentsKey          string = "arguments"
+	propertiesKey         string = "properties"
+	typeKey               string = "type"
+	parametrizationKey    string = "parametrization"
+	returnTypeName        string = "return"
+	BoolGolangTypeName    string = "bool"
+	StringGolangTypeName  string = "string"
+	IntGolangTypeName     string = "int"
+	Float64GolangTypeName string = "float64"
 )
 
 var (
@@ -256,13 +260,13 @@ func readTypeName(typeName string) (string, error) {
 	}
 	switch typeName {
 	case schema.BooleanType:
-		return "bool", nil
+		return BoolGolangTypeName, nil
 	case schema.StringType:
-		return "string", nil
+		return StringGolangTypeName, nil
 	case schema.IntType:
-		return "int", nil
+		return IntGolangTypeName, nil
 	case schema.NumberType:
-		return "float64", nil
+		return Float64GolangTypeName, nil
 	case schema.ListType:
 		return "", fmt.Errorf("list type currently unsupported")
 	case schema.MapType:

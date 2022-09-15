@@ -9,14 +9,32 @@ import (
 	"github.com/gibmir/ion-go/pool"
 )
 
-type HttpRequestFactory struct {
+type RequestFactoryEnvironment interface {
+	GetBufferPool() *pool.BufferPool
+	GetHttpClient() *http.Client
+	GetDefaultUrl() string
+}
+
+type HttpRequestFactoryEnvironment struct {
 	bufferPool *pool.BufferPool
 	httpClient *http.Client
 	defaultUrl string
 }
 
-func NewHttpRequestFactory(config *configuration.Configuration) *HttpRequestFactory {
-	return &HttpRequestFactory{
+func (env *HttpRequestFactoryEnvironment) GetBufferPool() *pool.BufferPool {
+	return env.bufferPool
+}
+
+func (env *HttpRequestFactoryEnvironment) GetHttpClient() *http.Client {
+	return env.httpClient
+}
+
+func (env *HttpRequestFactoryEnvironment) GetDefaultUrl() string {
+	return env.defaultUrl
+}
+
+func NewHttpRequestFactory(config *configuration.Configuration) *HttpRequestFactoryEnvironment {
+	return &HttpRequestFactoryEnvironment{
 		bufferPool: pool.NewBufferPool(config.GetPoolSize(), config.GetBufferLength()),
 		httpClient: http.DefaultClient,
 		defaultUrl: config.GetUrl(),
@@ -24,7 +42,7 @@ func NewHttpRequestFactory(config *configuration.Configuration) *HttpRequestFact
 }
 
 func NewRequest0[R any](
-	factory *HttpRequestFactory,
+	factory RequestFactoryEnvironment,
 	procedure *api.Describer0[R],
 ) (Request0[R], error) {
 	if factory == nil || procedure == nil {
@@ -36,9 +54,9 @@ func NewRequest0[R any](
 		HttpRequest: &HttpRequest{
 			methodName: procedureDescription.ProcedureName,
 			httpSender: &HttpSender{
-				bufferPool: factory.bufferPool,
-				httpClient: factory.httpClient,
-				url:        factory.defaultUrl,
+				bufferPool: factory.GetBufferPool(),
+				httpClient: factory.GetHttpClient(),
+				url:        factory.GetDefaultUrl(),
 			},
 		},
 	}
@@ -46,7 +64,7 @@ func NewRequest0[R any](
 }
 
 func NewRequest1[T, R any](
-	factory *HttpRequestFactory,
+	factory RequestFactoryEnvironment,
 	procedure *api.Describer1[T, R],
 ) (Request1[T, R], error) {
 	if factory == nil || procedure == nil {
@@ -58,9 +76,9 @@ func NewRequest1[T, R any](
 		HttpRequest: &HttpRequest{
 			methodName: procedureDescription.ProcedureName,
 			httpSender: &HttpSender{
-				bufferPool: factory.bufferPool,
-				httpClient: factory.httpClient,
-				url:        factory.defaultUrl,
+				bufferPool: factory.GetBufferPool(),
+				httpClient: factory.GetHttpClient(),
+				url:        factory.GetDefaultUrl(),
 			},
 		},
 	}
@@ -68,7 +86,7 @@ func NewRequest1[T, R any](
 }
 
 func NewRequest2[T1, T2, R any](
-	factory *HttpRequestFactory,
+	factory RequestFactoryEnvironment,
 	procedure *api.Describer2[T1, T2, R],
 ) (Request2[T1, T2, R], error) {
 	if factory == nil || procedure == nil {
@@ -81,9 +99,9 @@ func NewRequest2[T1, T2, R any](
 		HttpRequest: &HttpRequest{
 			methodName: procedureDescription.ProcedureName,
 			httpSender: &HttpSender{
-				bufferPool: factory.bufferPool,
-				httpClient: factory.httpClient,
-				url:        factory.defaultUrl,
+				bufferPool: factory.GetBufferPool(),
+				httpClient: factory.GetHttpClient(),
+				url:        factory.GetDefaultUrl(),
 			},
 		},
 	}
@@ -91,7 +109,7 @@ func NewRequest2[T1, T2, R any](
 }
 
 func NewRequest3[T1, T2, T3, R any](
-	factory *HttpRequestFactory,
+	factory RequestFactoryEnvironment,
 	procedure *api.Describer3[T1, T2, T3, R],
 ) (Request3[T1, T2, T3, R], error) {
 	if factory == nil || procedure == nil {
@@ -105,9 +123,9 @@ func NewRequest3[T1, T2, T3, R any](
 		HttpRequest: &HttpRequest{
 			methodName: procedureDescription.ProcedureName,
 			httpSender: &HttpSender{
-				bufferPool: factory.bufferPool,
-				httpClient: factory.httpClient,
-				url:        factory.defaultUrl,
+				bufferPool: factory.GetBufferPool(),
+				httpClient: factory.GetHttpClient(),
+				url:        factory.GetDefaultUrl(),
 			},
 		},
 	}
