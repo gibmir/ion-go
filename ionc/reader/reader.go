@@ -15,6 +15,7 @@ const (
 	idKey                 string = "id"
 	defaultId             string = "default id"
 	proceduresKey         string = "procedures"
+	namespacesKey         string = "namespaces"
 	returnTypeKey         string = "return"
 	argumentsKey          string = "arguments"
 	propertiesKey         string = "properties"
@@ -53,7 +54,9 @@ func ReadSchema(jsonPath string, apiJson interface{}) (*schema.Schema, error) {
 
 func readNamespaces(apiJsonMap map[string]interface{}) ([]schema.Namespace, error) {
 	namespaces := make([]schema.Namespace, 0, len(apiJsonMap))
-	for namespaceName, definition := range apiJsonMap {
+	namespacesJson := apiJsonMap[namespacesKey]
+	namespacesJsonMap := namespacesJson.(map[string]interface{})
+	for namespaceName, definition := range namespacesJsonMap {
 		if namespaceDefinitionMap, ok := definition.(map[string]interface{}); ok {
 			namespace, err := readNamespace(namespaceName, namespaceDefinitionMap)
 			if err != nil {

@@ -1,28 +1,30 @@
 {
-  "testingNamespace":{
-    "types": {
-      "testType": {
-        "description": "test type",
-        "properties": {
-          "testTypeNumericProperty": {
-            "type": "number",
-            "description": "numeric property"
+  "namespaces":  {
+    "testingNamespace":{
+      "types": {
+        "testType": {
+          "description": "test type",
+          "properties": {
+            "testTypeNumericProperty": {
+              "type": "number",
+              "description": "numeric property"
+            }
           }
         }
-      }
-    },
-    "procedures": {
-      "testProcedure": {
-        "description": "This is test procedure",
-        "arguments": {
-          "testComposedArgument": {
-            "type": "testType",
-            "description": "test argument"
+      },
+      "procedures": {
+        "testProcedure": {
+          "description": "This is test procedure",
+          "arguments": {
+            "testComposedArgument": {
+              "type": "testType",
+              "description": "test argument"
+            }
+          },
+          "return": {
+            "type": "string",
+            "description": "test return argument"
           }
-        },
-        "return": {
-          "type": "string",
-          "description": "test return argument"
         }
       }
     }

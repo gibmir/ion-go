@@ -2,6 +2,7 @@ package reader
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	schema "github.com/gibmir/ion-go/schema/core"
@@ -46,114 +47,127 @@ const (
 
 func TestUnmarshalNamespace_Smoke(t *testing.T) {
 	a := assert.New(t)
-	jsonString := "{\n" +
-		"    \"" + testNamespaceName + "\": {\n" +
-		"    \"" + idKey + "\": \"" + testNamespaceId + "\",\n" +
-		"    \"" + descriptionKey + "\": \"" + testNamespaceDescription + "\",\n" +
-		"    \"types\": {\n" +
-		"      \"" + testTypeName + "\": {\n" +
-		"        \"description\": \"" + testTypePropertyDescription + "\",\n" +
-		"        \"parametrization\": {\n" +
-		"          \"" + testParameterName + "\": {\n" +
-		"            \"id\": \"" + testParameterId + "\",\n" +
-		"            \"description\": \"" + testParameterDescription + "\"\n" +
-		"          }\n" +
-		"        },\n" +
-		"        \"properties\": {\n" +
-		"          \"" + testTypePropertyName + "\": {\n" +
-		"            \"id\": \"" + testTypePropertyId + "\",\n" +
-		"            \"type\": \"" + testTypePropertyType + "\",\n" +
-		"            \"description\": \"" + testTypePropertyDescription + "\"\n" +
-		"          }\n" +
-		"        }\n" +
-		"      }\n" +
-		"    },\n" +
-		"    \"procedures\": {\n" +
-		"      \"" + testProcedureName + "\": {\n" +
-		"        \"description\": \"" + testProcedureDescription + "\",\n" +
-		"        \"arguments\": {\n" +
-		"          \"" + testProcedureArgumentName + "\": {\n" +
-		"            \"type\": \"" + testProcedureArgumentType + "\",\n" +
-		"            \"description\": \"" + testProcedureArgumentDescription + "\"\n" +
-		"          }\n" +
-		"        },\n" +
-		"        \"return\": {\n" +
-		"          \"type\": \"" + testReturnArgumentType + "\",\n" +
-		"          \"description\": \"" + testReturnArgumentDescription + "\"\n" +
-		"        }\n" +
-		"      }\n" +
-		"    }\n" +
-		"  }\n" +
-		"}\n"
+	jsonString := fmt.Sprintf(`
+{
+  "namespaces": {
+    "%s": {
+      "id": "%s",
+      "description": "%s",
+      "types": {
+        "%s": {
+          "parametrization": {
+            "%s": {
+	      "id": "%s",
+	      "description": "%s"
+	    }
+          },
+          "properties": {
+            "%s": {
+	      "id": "%s",
+	      "type": "%s",
+	      "description": "%s"
+	    }
+          }
+	}
+      },
+      "procedures": {
+        "%s": {
+	  "description": "%s",
+	  "arguments": {
+	    "%s": {
+	      "type": "%s",
+	      "description": "%s"
+	    }
+	  },
+	  "return": {
+	    "type": "%s",
+	    "description": "%s"
+	  }
+	}
+      }
+    }
+  }
+}
+`, testNamespaceName, testNamespaceId, testNamespaceDescription, testTypeName, testParameterName,
+		testParameterId, testParameterDescription, testTypePropertyName, testTypePropertyId,
+		testTypePropertyType, testTypePropertyDescription, testProcedureName,
+		testProcedureDescription, testProcedureArgumentName, testProcedureArgumentType,
+		testProcedureArgumentDescription, testReturnArgumentType,
+		testReturnArgumentDescription)
 	b := []byte(jsonString)
 	var f interface{}
 
 	err := json.Unmarshal(b, &f)
 
 	a.Nil(err)
-	a.Equal(map[string]interface{}{
-		testNamespaceName: map[string]interface{}{
-			idKey:          testNamespaceId,
-			descriptionKey: testNamespaceDescription,
-			typesKey: map[string]interface{}{
-				testTypeName: map[string]interface{}{
-					descriptionKey: testTypePropertyDescription,
-					parametrizationKey: map[string]interface{}{
-						testParameterName: map[string]interface{}{
-							idKey:          testParameterId,
-							descriptionKey: testParameterDescription,
+	a.Equal(f, map[string]interface{}{
+		namespacesKey: map[string]interface{}{
+			testNamespaceName: map[string]interface{}{
+				idKey:          testNamespaceId,
+				descriptionKey: testNamespaceDescription,
+				typesKey: map[string]interface{}{
+					testTypeName: map[string]interface{}{
+						parametrizationKey: map[string]interface{}{
+							testParameterName: map[string]interface{}{
+								idKey:          testParameterId,
+								descriptionKey: testParameterDescription,
+							},
 						},
-					},
-					propertiesKey: map[string]interface{}{
-						testTypePropertyName: map[string]interface{}{
-							typeKey:        testTypePropertyType,
-							descriptionKey: testTypePropertyDescription,
-							idKey:          testTypePropertyId,
+						propertiesKey: map[string]interface{}{
+							testTypePropertyName: map[string]interface{}{
+								typeKey:        testTypePropertyType,
+								descriptionKey: testTypePropertyDescription,
+								idKey:          testTypePropertyId,
+							},
 						},
 					},
 				},
-			},
-			proceduresKey: map[string]interface{}{
-				testProcedureName: map[string]interface{}{
-					descriptionKey: testProcedureDescription,
-					argumentsKey: map[string]interface{}{
-						testProcedureArgumentName: map[string]interface{}{
-							typeKey:        testProcedureArgumentType,
-							descriptionKey: testProcedureArgumentDescription,
+				proceduresKey: map[string]interface{}{
+					testProcedureName: map[string]interface{}{
+						descriptionKey: testProcedureDescription,
+						argumentsKey: map[string]interface{}{
+							testProcedureArgumentName: map[string]interface{}{
+								typeKey:        testProcedureArgumentType,
+								descriptionKey: testProcedureArgumentDescription,
+							},
 						},
-					},
-					returnTypeKey: map[string]interface{}{
-						typeKey:        testReturnArgumentType,
-						descriptionKey: testReturnArgumentDescription,
+						returnTypeKey: map[string]interface{}{
+							typeKey:        testReturnArgumentType,
+							descriptionKey: testReturnArgumentDescription,
+						},
 					},
 				},
 			},
 		},
-	}, f)
+	})
 }
 
 func TestUnmarshalTypes_Smoke(t *testing.T) {
 	a := assert.New(t)
-	jsonString := "{\n" +
-		"    \"types\": {\n" +
-		"    \"" + testTypeName + "\": {\n" +
-		"      \"description\": \"" + testTypePropertyDescription + "\",\n" +
-		"      \"parametrization\": {\n" +
-		"        \"" + testParameterName + "\": {\n" +
-		"          \"id\": \"" + testParameterId + "\",\n" +
-		"          \"description\": \"" + testParameterDescription + "\"\n" +
-		"        }\n" +
-		"       },\n" +
-		"      \"properties\": {\n" +
-		"        \"" + testTypePropertyName + "\": {\n" +
-		"          \"id\": \"" + testTypePropertyId + "\",\n" +
-		"          \"type\": \"" + testTypePropertyType + "\",\n" +
-		"          \"description\": \"" + testTypePropertyDescription + "\"\n" +
-		"        }\n" +
-		"      }\n" +
-		"    }\n" +
-		"  }\n" +
-		"}"
+	jsonString := fmt.Sprintf(`
+{
+  "types": {
+    "%s": {
+      "description": "%s",
+      "parametrization": {
+        "%s": {
+	  "id": "%s",
+	  "description": "%s"
+	  }
+       },
+       "properties": {
+	  "%s": {
+	    "id": "%s",
+	    "type": "%s",
+            "description": "%s"
+        }
+      }
+    }
+  }
+}
+`, testTypeName, testTypePropertyDescription, testParameterName, testParameterId,
+		testParameterDescription, testTypePropertyName, testTypePropertyId,
+		testTypePropertyType, testTypePropertyDescription)
 	b := []byte(jsonString)
 	var f interface{}
 
@@ -184,24 +198,28 @@ func TestUnmarshalTypes_Smoke(t *testing.T) {
 
 func TestUnmarshalProcedures_Smoke(t *testing.T) {
 	a := assert.New(t)
+	jsonString := fmt.Sprintf(`
+{
+  "procedures": {
+    "%s": {
+      "description": "%s",
+      "arguments": {
+        "%s": {
+	  "type": "%s",
+	  "description": "%s"
+	}
+      },
+      "return": {
+        "type": "%s",
+	"description": "%s"
+      }
+    }
+  }
+}
+`, testProcedureName, testProcedureDescription, testProcedureArgumentName,
+		testProcedureArgumentType, testProcedureArgumentDescription,
+		testReturnArgumentType, testReturnArgumentDescription)
 
-	jsonString := "{\n" +
-		"    \"procedures\": {\n" +
-		"    \"" + testProcedureName + "\": {\n" +
-		"      \"description\": \"" + testProcedureDescription + "\",\n" +
-		"      \"arguments\": {\n" +
-		"        \"" + testProcedureArgumentName + "\": {\n" +
-		"          \"type\": \"" + testProcedureArgumentType + "\",\n" +
-		"          \"description\": \"" + testProcedureArgumentDescription + "\"\n" +
-		"        }\n" +
-		"      },\n" +
-		"      \"return\": {\n" +
-		"        \"type\": \"" + testReturnArgumentType + "\",\n" +
-		"        \"description\": \"" + testReturnArgumentDescription + "\"\n" +
-		"      }\n" +
-		"    }\n" +
-		"  }\n" +
-		"}"
 	b := []byte(jsonString)
 	var f interface{}
 	err := json.Unmarshal(b, &f)
@@ -229,40 +247,42 @@ func TestUnmarshalProcedures_Smoke(t *testing.T) {
 func TestReadNamespaces_Smoke(t *testing.T) {
 	a := assert.New(t)
 	namespacesMap := map[string]interface{}{
-		testNamespaceName: map[string]interface{}{
-			idKey:          testNamespaceId,
-			descriptionKey: testNamespaceDescription,
-			typesKey: map[string]interface{}{
-				testTypeName: map[string]interface{}{
-					descriptionKey: testTypePropertyDescription,
-					parametrizationKey: map[string]interface{}{
-						testParameterName: map[string]interface{}{
-							idKey:          testParameterId,
-							descriptionKey: testParameterDescription,
+		namespacesKey: map[string]interface{}{
+			testNamespaceName: map[string]interface{}{
+				idKey:          testNamespaceId,
+				descriptionKey: testNamespaceDescription,
+				typesKey: map[string]interface{}{
+					testTypeName: map[string]interface{}{
+						descriptionKey: testTypePropertyDescription,
+						parametrizationKey: map[string]interface{}{
+							testParameterName: map[string]interface{}{
+								idKey:          testParameterId,
+								descriptionKey: testParameterDescription,
+							},
 						},
-					},
-					propertiesKey: map[string]interface{}{
-						testTypePropertyName: map[string]interface{}{
-							typeKey:        testTypePropertyType,
-							descriptionKey: testTypePropertyDescription,
-							idKey:          testTypePropertyId,
+						propertiesKey: map[string]interface{}{
+							testTypePropertyName: map[string]interface{}{
+								typeKey:        testTypePropertyType,
+								descriptionKey: testTypePropertyDescription,
+								idKey:          testTypePropertyId,
+							},
 						},
 					},
 				},
-			},
-			proceduresKey: map[string]interface{}{
-				testProcedureName: map[string]interface{}{
-					descriptionKey: testProcedureDescription,
-					idKey:          testProcedureId,
-					argumentsKey: map[string]interface{}{
-						testProcedureArgumentName: map[string]interface{}{
-							typeKey:        testProcedureArgumentType,
-							descriptionKey: testProcedureArgumentDescription,
+				proceduresKey: map[string]interface{}{
+					testProcedureName: map[string]interface{}{
+						descriptionKey: testProcedureDescription,
+						idKey:          testProcedureId,
+						argumentsKey: map[string]interface{}{
+							testProcedureArgumentName: map[string]interface{}{
+								typeKey:        testProcedureArgumentType,
+								descriptionKey: testProcedureArgumentDescription,
+							},
 						},
-					},
-					returnTypeKey: map[string]interface{}{
-						typeKey:        testReturnArgumentType,
-						descriptionKey: testReturnArgumentDescription,
+						returnTypeKey: map[string]interface{}{
+							typeKey:        testReturnArgumentType,
+							descriptionKey: testReturnArgumentDescription,
+						},
 					},
 				},
 			},
@@ -405,30 +425,32 @@ func TestReadSchema_Example(t *testing.T) {
 
 	testExampleJson := `
 {
-  "testingNamespace":{
-    "types": {
-      "testType": {
-        "description": "test type",
-        "properties": {
-          "testTypeNumericProperty": {
-            "type": "number",
-            "description": "numeric property"
+  "namespaces": {
+    "testingNamespace": {
+      "types": {
+        "testType": {
+          "description": "test type",
+          "properties": {
+            "testTypeNumericProperty": {
+              "type": "number",
+              "description": "numeric property"
+            }
           }
         }
-      }
-    },
-    "procedures": {
-      "testProcedure": {
-        "description": "This is test procedure",
-        "arguments": {
-          "testComposedArgument": {
-            "type": "testTypeNumericProperty",
-            "description": "test argument"
+      },
+      "procedures": {
+        "testProcedure": {
+          "description": "This is test procedure",
+          "arguments": {
+            "testComposedArgument": {
+              "type": "testTypeNumericProperty",
+              "description": "test argument"
+            }
+          },
+          "return": {
+            "type": "string",
+            "description": "test return argument"
           }
-        },
-        "return": {
-          "type": "string",
-          "description": "test return argument"
         }
       }
     }
@@ -442,7 +464,7 @@ func TestReadSchema_Example(t *testing.T) {
 	a.Nil(err)
 	a.Equal(1, len(namespaces))
 	a.Equal("testingNamespace", namespaces[0].Name)
-	a.Equal("testType", namespaces[0].Types[0].Name)
+	a.Equal("TestType", namespaces[0].Types[0].Name)
 }
 
 func TestReadTypeName_Boolean_Success(t *testing.T) {
