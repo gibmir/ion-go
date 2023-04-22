@@ -2,7 +2,6 @@ package reader
 
 import (
 	"fmt"
-	"unicode"
 
 	schema "github.com/gibmir/ion-go/schema/core"
 	"github.com/sirupsen/logrus"
@@ -270,14 +269,9 @@ func readTypeName(typeName string) (string, error) {
 		return IntGolangTypeName, nil
 	case schema.NumberType:
 		return Float64GolangTypeName, nil
-	case schema.ListType:
-		return "", fmt.Errorf("list type currently unsupported")
-	case schema.MapType:
-		return "", fmt.Errorf("map type currentle unsupported")
 	default:
-		typeNameRunes := []rune(typeName)
-		typeNameRunes[0] = unicode.ToUpper(typeNameRunes[0])
-		return string(typeNameRunes), nil
+		tree := NewTypeTree(typeName)
+		return ToTypeName(tree), nil
 	}
 }
 

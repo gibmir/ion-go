@@ -442,7 +442,7 @@ func TestReadSchema_Example(t *testing.T) {
         "testProcedure": {
           "description": "This is test procedure",
           "arguments": {
-            "testComposedArgument": {
+            "testType": {
               "type": "testTypeNumericProperty",
               "description": "test argument"
             }
