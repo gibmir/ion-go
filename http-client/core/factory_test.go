@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/gibmir/ion-go/api/core"
-	"github.com/gibmir/ion-go/http-client/core/mocks"
+	mocks "github.com/gibmir/ion-go/http-client/mocks"
 )
 
 func TestGenerate(t *testing.T) {

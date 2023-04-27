@@ -2,9 +2,10 @@ package core
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gibmir/ion-go/pool"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 type HttpSender struct {
@@ -19,7 +20,6 @@ func (httpSender *HttpSender) sendRequest(requestBytes []byte, id, methodName st
 	_, err := buffer.Write(requestBytes)
 	if err != nil {
 		return nil, fmt.Errorf("unable to write request with id [%s]. %w", id, err)
-
 	}
 
 	// send request

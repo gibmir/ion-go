@@ -5,13 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gibmir/ion-go/api/dto"
-	"github.com/sirupsen/logrus"
 )
-
-type Request1[T, R any] interface {
-	PositionalCall(id string, argument T, responseChannel chan<- *R, errorChannel chan<- error)
-	PositionalNotification(argument T)
-}
 
 //one arg requets
 type HttpRequest1[T, R any] struct {
@@ -20,7 +14,7 @@ type HttpRequest1[T, R any] struct {
 }
 
 func (r *HttpRequest1[T, R]) PositionalCall(id string, argument T, responseChannel chan<- *R, errorChannel chan<- error) {
-	go func(id string, argument T, responseChannel chan<- *R, errorChannel chan<- error) {
+	r.proc.Process(func(){
 		defer close(responseChannel)
 		defer close(errorChannel)
 
@@ -38,6 +32,8 @@ func (r *HttpRequest1[T, R]) PositionalCall(id string, argument T, responseChann
 			errorChannel <- fmt.Errorf("unable to marshal request with id [%s]. %w", id, err)
 			return
 		}
+
+		r.log.Infof("sending positional request with id [%s]", id)
 		responseBytes, err := r.httpSender.sendRequest(requestBytes, id, r.methodName)
 		if err != nil {
 			errorChannel <- fmt.Errorf("unable to send request with id [%s]. %w", id, err)
@@ -51,18 +47,18 @@ func (r *HttpRequest1[T, R]) PositionalCall(id string, argument T, responseChann
 			errorChannel <- fmt.Errorf("unable to unmarshal response body for request with id [%s]. %w", id, err)
 			return
 		}
-		logrus.Infof("response for request with id [%s] was received", id)
+		r.log.Infof("response for request with id [%s] was received", id)
 		if responseError := response.Error; responseError != nil {
 			// user error api
 			errorChannel <- fmt.Errorf("received api error as response for request with id [%s].", id)
 
 		}
 		responseChannel <- &response.Result
-	}(id, argument, responseChannel, errorChannel)
+	})
 }
 
 func (r *HttpRequest1[T, R]) PositionalNotification(argument T) {
-	go func(argument T) {
+	r.proc.Process(func(){
 		//prepare notification
 		request := dto.Positional{
 			Parameters: []interface{}{argument},
@@ -74,10 +70,11 @@ func (r *HttpRequest1[T, R]) PositionalNotification(argument T) {
 		notificationBytes, err := json.Marshal(request)
 
 		if err != nil {
-			logrus.Errorf("unable to marshal notification for method [%s]. %v",
+			r.log.Errorf("unable to marshal notification for method [%s]. %v",
 				r.methodName, err)
 			return
 		}
+		r.log.Info("sending positional notification")
 		r.httpSender.sendNotification(notificationBytes, r.methodName)
-	}(argument)
+	})
 }
