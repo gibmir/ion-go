@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gibmir/ion-go/client/processor"
 	"github.com/gibmir/ion-go/pool"
+	"github.com/gibmir/ion-go/processor"
 	"github.com/sirupsen/logrus"
 )
 

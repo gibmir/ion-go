@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/gibmir/ion-go/client/processor"
+	"github.com/gibmir/ion-go/processor"
 	"github.com/sirupsen/logrus"
 )
 

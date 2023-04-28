@@ -6,8 +6,9 @@ require (
 	github.com/gibmir/ion-go/api v0.0.0
 	github.com/gibmir/ion-go/client v0.0.0-00010101000000-000000000000
 	github.com/gibmir/ion-go/pool v0.0.0
+	github.com/gibmir/ion-go/processor v0.0.0
 	github.com/sirupsen/logrus v1.9.0
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.1
 )
 
 require (
@@ -23,3 +24,5 @@ replace github.com/gibmir/ion-go/client => ../client
 replace github.com/gibmir/ion-go/api => ../api
 
 replace github.com/gibmir/ion-go/pool => ../pool
+
+replace github.com/gibmir/ion-go/processor => ../processor

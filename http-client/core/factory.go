@@ -6,9 +6,9 @@ import (
 
 	api "github.com/gibmir/ion-go/api/core"
 	clientapi "github.com/gibmir/ion-go/client/core"
-	"github.com/gibmir/ion-go/client/processor"
 	"github.com/gibmir/ion-go/http-client/configuration"
 	"github.com/gibmir/ion-go/pool"
+	"github.com/gibmir/ion-go/processor"
 	"github.com/sirupsen/logrus"
 )
 
