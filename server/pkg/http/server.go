@@ -1,4 +1,4 @@
-package server
+package http
 
 import (
 	"encoding/json"
@@ -10,17 +10,19 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/gibmir/ion-go/api/errors"
+	"github.com/gibmir/ion-go/server/internal/handle"
+	"github.com/gibmir/ion-go/server/internal/registry"
 )
 
 type HttpServer struct {
 	logger   *logrus.Logger
-	registry *Registry
+	registry *registry.Registry
 }
 
-func NewHttpServer(logger *logrus.Logger) *HttpServer {
+func NewServer(logger *logrus.Logger) *HttpServer {
 	return &HttpServer{
 		logger:   logger,
-		registry: &Registry{Registry: map[string]*RpcDescriptor{}},
+		registry: &registry.Registry{Registry: map[string]*registry.RpcDescriptor{}},
 	}
 }
 
@@ -29,8 +31,8 @@ func NewProcessor0[R any](
 	describer *api.Describer0[R],
 	procedure func() (R, error),
 ) {
-	server.registry.Add(describer.Description.ProcedureName, &RpcDescriptor{
-		MethodHandle: MethodHandle0[R]{call: procedure},
+	server.registry.Add(describer.Description.ProcedureName, &registry.RpcDescriptor{
+		MethodHandle: handle.MethodHandle0[R]{CallFn: procedure},
 		Marshaller:   describer,
 	})
 }
@@ -40,8 +42,8 @@ func NewProcessor1[T, R any](
 	describer *api.Describer1[T, R],
 	procedure func(t T) (R, error),
 ) {
-	server.registry.Add(describer.Description.ProcedureName, &RpcDescriptor{
-		MethodHandle: MethodHandle1[T, R]{call: procedure},
+	server.registry.Add(describer.Description.ProcedureName, &registry.RpcDescriptor{
+		MethodHandle: handle.MethodHandle1[T, R]{CallFn: procedure},
 		Marshaller:   describer,
 	})
 }
@@ -51,8 +53,8 @@ func NewProcessor2[T1, T2, R any](
 	describer *api.Describer2[T1, T2, R],
 	procedure func(t1 T1, t2 T2) (R, error),
 ) {
-	server.registry.Add(describer.Description.ProcedureName, &RpcDescriptor{
-		MethodHandle: MethodHandle2[T1, T2, R]{call: procedure},
+	server.registry.Add(describer.Description.ProcedureName, &registry.RpcDescriptor{
+		MethodHandle: handle.MethodHandle2[T1, T2, R]{CallFn: procedure},
 		Marshaller:   describer,
 	})
 }
@@ -62,8 +64,8 @@ func NewProcessor3[T1, T2, T3, R any](
 	describer *api.Describer3[T1, T2, T3, R],
 	procedure func(t1 T1, t2 T2, t3 T3) (R, error),
 ) {
-	server.registry.Add(describer.Description.ProcedureName, &RpcDescriptor{
-		MethodHandle: MethodHandle3[T1, T2, T3, R]{call: procedure},
+	server.registry.Add(describer.Description.ProcedureName, &registry.RpcDescriptor{
+		MethodHandle: handle.MethodHandle3[T1, T2, T3, R]{CallFn: procedure},
 		Marshaller:   describer,
 	})
 }

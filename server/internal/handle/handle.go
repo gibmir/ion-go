@@ -1,4 +1,4 @@
-package server
+package handle
 
 import "fmt"
 
@@ -15,11 +15,11 @@ func (err *IncorrectArgumentErr) Error() string {
 }
 
 type MethodHandle0[R any] struct {
-	call func() (R, error)
+	CallFn func() (R, error)
 }
 
 func (m MethodHandle0[R]) Call(args []interface{}) (interface{}, error) {
-	r, err := m.call()
+	r, err := m.CallFn()
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func (m MethodHandle0[R]) Call(args []interface{}) (interface{}, error) {
 }
 
 type MethodHandle1[T, R any] struct {
-	call func(t T) (R, error)
+	CallFn func(t T) (R, error)
 }
 
 func (m MethodHandle1[T, R]) Call(args []interface{}) (interface{}, error) {
@@ -40,7 +40,7 @@ func (m MethodHandle1[T, R]) Call(args []interface{}) (interface{}, error) {
 		return nil, &IncorrectArgumentErr{fmt.Sprintf("arg has incorrect type [%T].",args[0])}
 	}
 
-	r, err := m.call(arg)
+	r, err := m.CallFn(arg)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (m MethodHandle1[T, R]) Call(args []interface{}) (interface{}, error) {
 }
 
 type MethodHandle2[T1, T2, R any] struct {
-	call func(t1 T1, t2 T2) (R, error)
+	CallFn func(t1 T1, t2 T2) (R, error)
 }
 
 func (m MethodHandle2[T1, T2, R]) Call(args []interface{}) (interface{}, error) {
@@ -65,7 +65,7 @@ func (m MethodHandle2[T1, T2, R]) Call(args []interface{}) (interface{}, error) 
 	if !ok {
 		return nil, &IncorrectArgumentErr{}
 	}
-	r, err := m.call(arg1, arg2)
+	r, err := m.CallFn(arg1, arg2)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (m MethodHandle2[T1, T2, R]) Call(args []interface{}) (interface{}, error) 
 }
 
 type MethodHandle3[T1, T2, T3, R any] struct {
-	call func(t1 T1, t2 T2, t3 T3) (R, error)
+	CallFn func(t1 T1, t2 T2, t3 T3) (R, error)
 }
 
 func (m MethodHandle3[T1, T2, T3, R]) Call(args []interface{}) (interface{}, error) {
@@ -96,7 +96,7 @@ func (m MethodHandle3[T1, T2, T3, R]) Call(args []interface{}) (interface{}, err
 		return nil, &IncorrectArgumentErr{}
 	}
 
-	r, err := m.call(arg1, arg2, arg3)
+	r, err := m.CallFn(arg1, arg2, arg3)
 	if err != nil {
 		return nil, err
 	}

@@ -1,11 +1,13 @@
-package server
+package registry
 
 import (
 	api "github.com/gibmir/ion-go/api/core"
+
+	"github.com/gibmir/ion-go/server/internal/handle"
 )
 
 type RpcDescriptor struct {
-	MethodHandle MethodHandle
+	MethodHandle handle.MethodHandle
 	Marshaller api.Marshaller
 }
 

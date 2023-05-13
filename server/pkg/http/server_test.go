@@ -1,4 +1,4 @@
-package server
+package http
 
 import (
 	api "github.com/gibmir/ion-go/api/core"
