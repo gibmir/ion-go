@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/gibmir/ion-go/api/errors"
+	"github.com/gibmir/ion-go/api/pkg/errors"
 	"github.com/gibmir/ion-go/client/pkg/configuration"
 	"github.com/gibmir/ion-go/client/pkg/http"
 	"github.com/gibmir/ion-go/demo/api/testingNamespace"

@@ -3,8 +3,8 @@ package http
 import (
 	"fmt"
 
-	"github.com/gibmir/ion-go/api/dto"
-	"github.com/gibmir/ion-go/api/errors"
+	"github.com/gibmir/ion-go/api/pkg/dto"
+	"github.com/gibmir/ion-go/api/pkg/errors"
 
 	"encoding/json"
 )

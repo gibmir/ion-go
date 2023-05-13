@@ -1,7 +1,7 @@
 package http
 
 import (
-	api "github.com/gibmir/ion-go/api/core"
+	api "github.com/gibmir/ion-go/api/pkg/describer"
 )
 
 func Example() {

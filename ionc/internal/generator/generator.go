@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	defaultImport     = "github.com/gibmir/ion-go/api/core"
+	defaultImport     = "github.com/gibmir/ion-go/api/pkg/describer"
 	apiTemplateString = "package "
 	typeTemplateText  = `
 // {{public .Name}} {{.Description}}

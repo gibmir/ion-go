@@ -1,12 +1,12 @@
-package core
+package describer
 
 import (
 	"encoding/json"
 	goerrors "errors"
 	"fmt"
 
-	"github.com/gibmir/ion-go/api/dto"
-	"github.com/gibmir/ion-go/api/errors"
+	"github.com/gibmir/ion-go/api/pkg/dto"
+	"github.com/gibmir/ion-go/api/pkg/errors"
 )
 
 var (

@@ -6,10 +6,10 @@ import (
 	"io"
 	"net/http"
 
-	api "github.com/gibmir/ion-go/api/core"
+	api "github.com/gibmir/ion-go/api/pkg/describer"
 	"github.com/sirupsen/logrus"
 
-	"github.com/gibmir/ion-go/api/errors"
+	"github.com/gibmir/ion-go/api/pkg/errors"
 	"github.com/gibmir/ion-go/server/internal/handle"
 	"github.com/gibmir/ion-go/server/internal/registry"
 )

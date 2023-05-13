@@ -8,7 +8,7 @@ import (
 
 	"encoding/json"
 
-	"github.com/gibmir/ion-go/api/dto"
+	"github.com/gibmir/ion-go/api/pkg/dto"
 )
 
 const (

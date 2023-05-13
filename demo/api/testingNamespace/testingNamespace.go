@@ -1,6 +1,6 @@
 // testingNamespace default description
 package testingNamespace
-import api "github.com/gibmir/ion-go/api/core"
+import api "github.com/gibmir/ion-go/api/pkg/describer"
 var (
 
 TestProcedureDescriber = api.Describer1[*TestType, string]{
@@ -18,13 +18,13 @@ TestProcedureDescriber = api.Describer1[*TestType, string]{
 // TestType test type
 type TestType struct{
   
+  // TestTypeNumericProperty numeric property
+  TestTypeNumericProperty float64
+  
   // TestTypeErrorFlag returns error if true
   TestTypeErrorFlag bool
   
   // TestTypeJsonRpcErrorFlag returns json-rpc error if true
   TestTypeJsonRpcErrorFlag bool
-  
-  // TestTypeNumericProperty numeric property
-  TestTypeNumericProperty float64
   
 }

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	api "github.com/gibmir/ion-go/api/core"
+	api "github.com/gibmir/ion-go/api/pkg/describer"
 	"github.com/gibmir/ion-go/client/pkg/configuration"
 	"github.com/gibmir/ion-go/processor"
 	"github.com/sirupsen/logrus"

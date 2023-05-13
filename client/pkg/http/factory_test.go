@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gibmir/ion-go/api/core"
-	"github.com/gibmir/ion-go/api/errors"
+	core "github.com/gibmir/ion-go/api/pkg/describer"
+	"github.com/gibmir/ion-go/api/pkg/errors"
 	mocks "github.com/gibmir/ion-go/client/test/mocks"
 )
 

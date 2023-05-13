@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/gibmir/ion-go/api/errors"
+import "github.com/gibmir/ion-go/api/pkg/errors"
 
 const (
 	JsonRpcProtocol = "2.0"
