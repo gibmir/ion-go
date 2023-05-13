@@ -23,7 +23,7 @@ func (bufferPool *BufferPool) Get() *bytes.Buffer {
 	case buffer := <-bufferPool.pool:
 		return buffer
 	default:
-		return bytes.NewBuffer(make([]byte, 0 /*len*/, bufferPool.bufferLength /*cap*/))
+		return bytes.NewBuffer(make([]byte, bufferPool.bufferLength))
 	}
 }
 

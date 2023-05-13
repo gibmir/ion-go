@@ -21,10 +21,6 @@ const (
 	typeKey               string = "type"
 	parametrizationKey    string = "parametrization"
 	returnTypeName        string = "return"
-	BoolGolangTypeName    string = "bool"
-	StringGolangTypeName  string = "string"
-	IntGolangTypeName     string = "int"
-	Float64GolangTypeName string = "float64"
 )
 
 var (
@@ -262,13 +258,13 @@ func readTypeName(typeName string) (string, error) {
 	}
 	switch typeName {
 	case schema.BooleanType:
-		return BoolGolangTypeName, nil
+		return schema.BoolGolangTypeName, nil
 	case schema.StringType:
-		return StringGolangTypeName, nil
+		return schema.StringGolangTypeName, nil
 	case schema.IntType:
-		return IntGolangTypeName, nil
+		return schema.IntGolangTypeName, nil
 	case schema.NumberType:
-		return Float64GolangTypeName, nil
+		return schema.Float64GolangTypeName, nil
 	default:
 		tree := NewTypeTree(typeName)
 		return ToTypeName(tree), nil

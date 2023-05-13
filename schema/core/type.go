@@ -13,6 +13,11 @@ const (
 	CustomType  = "custom"
 	ListType    = "list"
 	MapType     = "map"
+
+	BoolGolangTypeName    = "bool"
+	StringGolangTypeName  = "string"
+	IntGolangTypeName     = "int"
+	Float64GolangTypeName = "float64"
 )
 
 type TypeNode struct {

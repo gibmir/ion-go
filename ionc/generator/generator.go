@@ -6,44 +6,33 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"unicode"
 
 	schema "github.com/gibmir/ion-go/schema/core"
 )
 
 const (
-	defaultImport       = "github.com/gibmir/ion-go/api/core"
-	apiTemplateString   = "package "
-	zeroArgTemplateText = `
-//{{.Name}} {{.Description}}
-{{.Name}}Describer = api.Describer0[
-  // {{.ReturnType.Description}}
-  {{.ReturnType.TypeName}}
-]{
-  ReturnType: &api.Type[{{.ReturnType.TypeName}}]{},
-  Describer: &api.ProcedureDescription{
-    ProcedureName: "{{.Name}}",
-  },
-}
-`
-
-	simpleTypeTemplateText = `
-//{{.Name}} {{.Description}}
-type {{.Name}} struct {
+	defaultImport     = "github.com/gibmir/ion-go/api/core"
+	apiTemplateString = "package "
+	typeTemplateText  = `
+// {{public .Name}} {{.Description}}
+type {{public .Name}}{{if .TypeParameters}}[{{range $index, $typeParameter:=.TypeParameters}}{{if ne $index 0}},{{end}}{{$typeParameter.SchemaElement.Name}} any{{end}}]{{end}} struct{
   {{range $property:=.PropertyTypes}}
-    //{{$property.Name}} {{$property.Description}}
-    {{$property.Name}} {{$property.TypeName}}
+  // {{public $property.Name}} {{$property.Description}}
+  {{public $property.Name}} {{typeName $property.TypeName}}
   {{end}}
 }
 `
 )
 
 var (
-	zeroArgProcedureTemplate *template.Template = template.Must(template.
-					New("zero-arg").
-					Parse(zeroArgTemplateText))
-	simpleTypeTemplate *template.Template = template.Must(template.
-				New("simple-type").
-				Parse(simpleTypeTemplateText))
+	typeTemplate *template.Template = template.Must(template.
+		New("type").
+		Funcs(map[string]any{
+			"public": public,
+			"typeName": typeName,
+		}).
+		Parse(typeTemplateText))
 )
 
 func GenerateTemplate(apiSchema *schema.Schema, outDir string) error {
@@ -114,11 +103,9 @@ func generateType(stringBuilder *strings.Builder, typeDeclaration *schema.TypeDe
 	if typeDeclaration == nil {
 		return fmt.Errorf("type declaration is nil")
 	}
-	if len(typeDeclaration.TypeParameters) == 0 {
-		err := simpleTypeTemplate.Execute(stringBuilder, typeDeclaration)
-		if err != nil {
-			return err
-		}
+	err := typeTemplate.Execute(stringBuilder, typeDeclaration)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -148,85 +135,97 @@ func generateProcedure(stringBuilder *strings.Builder, procedure *schema.Procedu
 }
 
 func generateProcedure0(stringBuilder *strings.Builder, procedure *schema.Procedure) {
-	zeroArgProcedureTemplate.Execute(stringBuilder, procedure)
+	procedureDescriber := fmt.Sprintf(`
+%sDescriber = api.Describer0[%s]{
+  Describer: &api.Describer{
+    Description: &api.ProcedureDescription{
+      ProcedureName: "%s",
+    },
+  },
+}
+`, public(procedure.Name), typeName(procedure.ReturnType.Name), procedure.Name)
+	stringBuilder.WriteString(procedureDescriber)
 }
 
 func generateProcedure1(stringBuilder *strings.Builder, procedure *schema.Procedure) {
 	procedureDescriber := fmt.Sprintf(`
-%s = api.Describer1[%s, %s]{
-  FirstArgument: &api.Type[%s]{},
-  Describer0: &api.Describer0[%s]{
-    ReturnType: &api.Type[%s]{},
-    Describer: &api.Describer{
-      Description: &api.ProcedureDescription{
-	ProcedureName: "%s",
-        ArgNames: []string{
-	  "%s",
-	},
+%sDescriber = api.Describer1[%s, %s]{
+  Describer: &api.Describer{
+    Description: &api.ProcedureDescription{
+      ProcedureName: "%s",
+      ArgNames: []string{
+        "%s",
       },
     },
   },
 }
-`, procedure.Name+"Describer", procedure.ArgumentTypes[0].TypeName, procedure.ReturnType.TypeName,
-		procedure.ArgumentTypes[0].TypeName, procedure.ReturnType.TypeName,
-		procedure.ReturnType.TypeName, procedure.Name, procedure.ArgumentTypes[0].Name)
+`, public(procedure.Name), typeName(procedure.ArgumentTypes[0].TypeName), typeName(procedure.ReturnType.TypeName),
+		procedure.Name, procedure.ArgumentTypes[0].Name)
 
 	stringBuilder.WriteString(procedureDescriber)
 }
 
 func generateProcedure2(stringBuilder *strings.Builder, procedure *schema.Procedure) {
 	procedureDescriber := fmt.Sprintf(`
-%s = api.Describer2[%s, %s, %s]{
-  FirstArgument: &api.Type[%s]{},
-  SecondArgument: &api.Type[%s]{},
-  Describer0: &api.Describer0[%s]{
-    ReturnType: &api.Type[%s]{},
-    Describer: &api.Describer{
-      Description: &api.ProcedureDescription{
-	ProcedureName: "%s",
+%sDescriber = api.Describer2[%s, %s, %s]{
+  Describer: &api.Describer{
+    Description: &api.ProcedureDescription{
+	    ProcedureName: "%s",
         ArgNames: []string{
-	  "%s",
-	  "%s",
-	},
+	        "%s",
+	        "%s",
+	      },
       },
     },
-  },
 }
-`, procedure.Name+"Describer", procedure.ArgumentTypes[0].TypeName, procedure.ArgumentTypes[1].TypeName,
-		procedure.ReturnType.TypeName, procedure.ArgumentTypes[0].TypeName,
-		procedure.ArgumentTypes[1].TypeName, procedure.ReturnType.TypeName,
-		procedure.ReturnType.TypeName, procedure.Name, procedure.ArgumentTypes[0].Name,
-		procedure.ArgumentTypes[1].TypeName)
+`, public(procedure.Name), typeName(procedure.ArgumentTypes[0].TypeName), typeName(procedure.ArgumentTypes[1].TypeName),
+		typeName(procedure.ReturnType.TypeName),
+		procedure.Name, procedure.ArgumentTypes[0].Name,
+		procedure.ArgumentTypes[1].Name)
 
 	stringBuilder.WriteString(procedureDescriber)
 }
 
 func generateProcedure3(stringBuilder *strings.Builder, procedure *schema.Procedure) {
 	procedureDescriber := fmt.Sprintf(`
-%s = api.Describer3[%s, %s, %s,%s]{
-  FirstArgument: &api.Type[%s]{},
-  SecondArgument: &api.Type[%s]{},
-  ThirdArgument: &api.Type[%s]{},
-  Describer0: &api.Describer0[%s]{
-    ReturnType: &api.Type[%s]{},
-    Describer: &api.Describer{
-      Description: &api.ProcedureDescription{
-	ProcedureName: "%s",
+%sDescriber = api.Describer3[%s, %s, %s, %s]{
+  Describer: &api.Describer{
+    Description: &api.ProcedureDescription{
+	    ProcedureName: "%s",
         ArgNames: []string{
-	  "%s",
-	  "%s",
-	  "%s",
-	},
+	        "%s",
+	        "%s",
+	        "%s",
+	      },
       },
-    },
-  },
+   },
 }
-`, procedure.Name+"Describer", procedure.ArgumentTypes[0].TypeName, procedure.ArgumentTypes[1].TypeName,
-		procedure.ArgumentTypes[2].TypeName, procedure.ReturnType.TypeName,
-		procedure.ArgumentTypes[0].TypeName, procedure.ArgumentTypes[1].TypeName,
-		procedure.ArgumentTypes[2].TypeName, procedure.ReturnType.TypeName,
-		procedure.ReturnType.TypeName, procedure.Name, procedure.ArgumentTypes[0].Name,
-		procedure.ArgumentTypes[1].TypeName, procedure.ArgumentTypes[2].TypeName)
+`, public(procedure.Name), typeName(procedure.ArgumentTypes[0].TypeName), typeName(procedure.ArgumentTypes[1].TypeName),
+		typeName(procedure.ArgumentTypes[2].TypeName), typeName(procedure.ReturnType.TypeName),
+		procedure.Name, procedure.ArgumentTypes[0].Name,
+		procedure.ArgumentTypes[1].Name, procedure.ArgumentTypes[2].Name)
 
 	stringBuilder.WriteString(procedureDescriber)
+}
+
+func public(fieldName string) string {
+	fieldRunes := []rune(fieldName)
+	fieldRunes[0] = unicode.ToUpper(fieldRunes[0])
+	return string(fieldRunes)
+}
+
+func typeName(typeName string) string{
+
+	switch typeName {
+	case schema.BoolGolangTypeName:
+		return schema.BoolGolangTypeName
+	case schema.StringGolangTypeName:
+		return schema.StringGolangTypeName
+	case schema.IntGolangTypeName:
+		return schema.IntGolangTypeName
+	case schema.Float64GolangTypeName:
+		return schema.Float64GolangTypeName
+	default:
+		return "*"+public(typeName)
+	}
 }
