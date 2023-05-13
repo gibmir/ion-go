@@ -1,11 +1,12 @@
-package core
+package request
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/gibmir/ion-go/api/core"
-	mocks "github.com/gibmir/ion-go/http-client/mocks"
+	"github.com/gibmir/ion-go/api/errors"
+	mocks "github.com/gibmir/ion-go/client/test/mocks"
 )
 
 func TestGenerate(t *testing.T) {
@@ -41,9 +42,9 @@ func Example() {
 	// You can make API calls with request that provided by factory function
 	request1, _ := NewRequest1(&requestFactoryEnvironment, &apiProcedureDescriber)
 	// You can use responses channel for data pipelining
-	responsesChannel := make(chan *int)
+	responsesChannel := make(chan int)
 	// You can use error channel to aggregate errors processing
-	errorsChannel := make(chan error)
+	errorsChannel := make(chan *errors.JsonRpcError)
 	// You can make a json-rpc call
 	request1.PositionalCall("example-request-id", "example-request-argument",
 		responsesChannel, errorsChannel)

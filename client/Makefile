@@ -1,8 +1,8 @@
 GOBIN=$(GOPATH)/bin
 
-GENDIR = $(CURDIR)/core
+GENDIR = $(CURDIR)
 OUTPKG = mocks
-OUTDIR = $(CURDIR)/$(OUTPKG)
+OUTDIR = $(CURDIR)/test/$(OUTPKG)
 .PHONY: mocks
 mocks:
 	$(GOBIN)/mockery --all --dir ${GENDIR} --output ${OUTDIR} --outpkg OUTPKG 

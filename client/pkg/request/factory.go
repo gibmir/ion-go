@@ -1,11 +1,11 @@
-package core
+package request
 
 import (
 	"errors"
 	"net/http"
 
 	api "github.com/gibmir/ion-go/api/core"
-	"github.com/gibmir/ion-go/http-client/configuration"
+	"github.com/gibmir/ion-go/client/pkg/configuration"
 	"github.com/gibmir/ion-go/processor"
 	"github.com/sirupsen/logrus"
 )

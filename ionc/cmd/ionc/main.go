@@ -5,8 +5,8 @@ import (
 	"flag"
 	"os"
 
-	"github.com/gibmir/ion-go/ionc/generator"
-	"github.com/gibmir/ion-go/ionc/reader"
+	"github.com/gibmir/ion-go/ionc/internal/generator"
+	"github.com/gibmir/ion-go/ionc/internal/reader"
 	"github.com/sirupsen/logrus"
 )
 
