@@ -3,7 +3,7 @@ package reader
 import (
 	"fmt"
 
-	schema "github.com/gibmir/ion-go/schema/core"
+	"github.com/gibmir/ion-go/ionc/internal/schema"
 	"github.com/sirupsen/logrus"
 )
 

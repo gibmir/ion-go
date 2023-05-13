@@ -8,7 +8,7 @@ import (
 	"text/template"
 	"unicode"
 
-	schema "github.com/gibmir/ion-go/schema/core"
+	"github.com/gibmir/ion-go/ionc/internal/schema"
 )
 
 const (

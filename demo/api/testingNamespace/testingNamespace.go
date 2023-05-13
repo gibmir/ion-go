@@ -18,13 +18,13 @@ TestProcedureDescriber = api.Describer1[*TestType, string]{
 // TestType test type
 type TestType struct{
   
-  // TestTypeNumericProperty numeric property
-  TestTypeNumericProperty float64
-  
   // TestTypeErrorFlag returns error if true
   TestTypeErrorFlag bool
   
   // TestTypeJsonRpcErrorFlag returns json-rpc error if true
   TestTypeJsonRpcErrorFlag bool
+  
+  // TestTypeNumericProperty numeric property
+  TestTypeNumericProperty float64
   
 }

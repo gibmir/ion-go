@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	schema "github.com/gibmir/ion-go/schema/core"
+	"github.com/gibmir/ion-go/ionc/internal/schema"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -473,7 +473,7 @@ func TestReadTypeName_Boolean_Success(t *testing.T) {
 	actualTypeName, err := readTypeName(schema.BooleanType)
 
 	a.Nil(err)
-	a.Equal(BoolGolangTypeName, actualTypeName)
+	a.Equal(schema.BoolGolangTypeName, actualTypeName)
 }
 
 func TestReadTypeName_String_Success(t *testing.T) {
@@ -482,7 +482,7 @@ func TestReadTypeName_String_Success(t *testing.T) {
 	actualTypeName, err := readTypeName(schema.StringType)
 
 	a.Nil(err)
-	a.Equal(StringGolangTypeName, actualTypeName)
+	a.Equal(schema.StringGolangTypeName, actualTypeName)
 }
 
 func TestReadTypeName_Int_Success(t *testing.T) {
@@ -491,7 +491,7 @@ func TestReadTypeName_Int_Success(t *testing.T) {
 	actualTypeName, err := readTypeName(schema.IntType)
 
 	a.Nil(err)
-	a.Equal(IntGolangTypeName, actualTypeName)
+	a.Equal(schema.IntGolangTypeName, actualTypeName)
 }
 
 func TestReadTypeName_Number_Success(t *testing.T) {
@@ -500,5 +500,5 @@ func TestReadTypeName_Number_Success(t *testing.T) {
 	actualTypeName, err := readTypeName(schema.NumberType)
 
 	a.Nil(err)
-	a.Equal(Float64GolangTypeName, actualTypeName)
+	a.Equal(schema.Float64GolangTypeName, actualTypeName)
 }
