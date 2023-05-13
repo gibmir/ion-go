@@ -5,7 +5,7 @@ import (
 
 	"github.com/gibmir/ion-go/api/errors"
 	"github.com/gibmir/ion-go/client/pkg/configuration"
-	"github.com/gibmir/ion-go/client/pkg/request"
+	"github.com/gibmir/ion-go/client/pkg/http"
 	"github.com/gibmir/ion-go/demo/api/testingNamespace"
 	"github.com/gibmir/ion-go/processor"
 	"github.com/sirupsen/logrus"
@@ -18,8 +18,8 @@ func main() {
 	c:=configuration.Configuration{
 		Url:"http://localhost:55555/",
 	}
-	factory := request.NewHttpRequestFactory(proc, &c)
-	request, err := request.NewRequest1(factory, &testingNamespace.TestProcedureDescriber)
+	factory := http.NewHttpRequestFactory(proc, &c)
+	request, err := http.NewRequest1(factory, &testingNamespace.TestProcedureDescriber)
 	if err != nil {
 		logrus.Fatal(err)
 	}

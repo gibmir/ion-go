@@ -1,4 +1,4 @@
-package request
+package http
 
 import (
 	"github.com/gibmir/ion-go/processor"
