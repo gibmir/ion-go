@@ -71,8 +71,11 @@ func (d *Describer1[T, R]) unmarshal(bytes []byte) (T, error) {
 		if err != nil {
 			return t, errors.NewInvalidRequestError(err.Error())
 		}
-
-		err = json.Unmarshal(*argsMap[d.Description.ArgNames[0]], t)
+		arg, found := argsMap[d.Description.ArgNames[0]]
+		if !found {
+			return t, errors.NewParamNotFoundError(d.Description.ArgNames[0])
+		}
+		err = json.Unmarshal(*arg, &t)
 		if err != nil {
 			return t, errors.NewInvalidRequestError(err.Error())
 		}
@@ -88,7 +91,7 @@ func (d *Describer1[T, R]) unmarshal(bytes []byte) (T, error) {
 		}
 
 		if len(argsArray) != 1 {
-			return t, errors.NewInvalidParamsError(fmt.Sprintf("params array has incorrect size [%d]", len(argsArray)))
+			return t, errors.NewIncorrectArgsArrayLengthError(len(argsArray), 1)
 		}
 		err = json.Unmarshal(*argsArray[0], &t)
 		if err != nil {
@@ -137,12 +140,20 @@ func (d *Describer2[T1, T2, R]) unmarshal(bytes []byte) (T1, T2, error) {
 			return t1, t2, errors.NewInvalidRequestError(err.Error())
 		}
 
-		err = json.Unmarshal(*argsMap[d.Description.ArgNames[0]], t1)
+		arg1, found := argsMap[d.Description.ArgNames[0]]
+		if !found {
+			return t1, t2, errors.NewParamNotFoundError(d.Description.ArgNames[0])
+		}
+		err = json.Unmarshal(*arg1, &t1)
 		if err != nil {
 			return t1, t2, errors.NewInvalidRequestError(err.Error())
 		}
 
-		err = json.Unmarshal(*argsMap[d.Description.ArgNames[1]], t2)
+		arg2, found := argsMap[d.Description.ArgNames[1]]
+		if !found {
+			return t1, t2, errors.NewParamNotFoundError(d.Description.ArgNames[1])
+		}
+		err = json.Unmarshal(*arg2, &t2)
 		if err != nil {
 			return t1, t2, errors.NewInvalidRequestError(err.Error())
 		}
@@ -150,6 +161,25 @@ func (d *Describer2[T1, T2, R]) unmarshal(bytes []byte) (T1, T2, error) {
 		return t1, t2, nil
 	} else if firstRune == '[' {
 		//positional request
+
+		var argsArray []*json.RawMessage
+
+		err := json.Unmarshal(bytes, &argsArray)
+		if err != nil {
+			return t1, t2, errors.NewInvalidRequestError(err.Error())
+		}
+		if len(argsArray) != 2 {
+			return t1, t2, errors.NewInvalidParamsError(fmt.Sprintf("args array has incorrect length [%d]", len(argsArray)))
+		}
+		err = json.Unmarshal(*argsArray[0], &t1)
+		if err != nil {
+			return t1, t2, errors.NewInvalidRequestError(err.Error())
+		}
+
+		err = json.Unmarshal(*argsArray[1], &t2)
+		if err != nil {
+			return t1, t2, errors.NewInvalidRequestError(err.Error())
+		}
 
 		return t1, t2, nil
 	} else {
@@ -193,7 +223,7 @@ func marshalResult[R any](id string, result any, err error) []byte {
 		})
 	}
 
-	return marshal(id, dto.Response[R]{Id: id, Result: r})
+	return marshal(id, dto.Response[R]{Protocol: dto.DefaultJsonRpcProtocolVersion, Id: id, Result: r})
 }
 
 func MarshalError(err error) []byte {
@@ -245,21 +275,29 @@ func (d *Describer3[T1, T2, T3, R]) unmarshal(bytes []byte) (T1, T2, T3, error) 
 			return t1, t2, t3, errors.NewInvalidRequestError(err.Error())
 		}
 
-		firstRawArg, ok := argsMap[d.Description.ArgNames[0]]
-		if !ok {
-			return t1, t2, t3, errors.NewInvalidParamsError(fmt.Sprintf("[%s] not found", d.Description.ArgNames[0]))
+		arg1, found := argsMap[d.Description.ArgNames[0]]
+		if !found {
+			return t1, t2, t3, errors.NewParamNotFoundError(d.Description.ArgNames[0])
 		}
-		err = json.Unmarshal(*firstRawArg, &t1)
+		err = json.Unmarshal(*arg1, &t1)
 		if err != nil {
 			return t1, t2, t3, errors.NewInvalidRequestError(err.Error())
 		}
 
-		err = json.Unmarshal(*argsMap[d.Description.ArgNames[1]], &t2)
+		arg2, found := argsMap[d.Description.ArgNames[1]]
+		if !found {
+			return t1, t2, t3, errors.NewParamNotFoundError(d.Description.ArgNames[1])
+		}
+		err = json.Unmarshal(*arg2, &t2)
 		if err != nil {
 			return t1, t2, t3, errors.NewInvalidRequestError(err.Error())
 		}
 
-		err = json.Unmarshal(*argsMap[d.Description.ArgNames[2]], &t3)
+		arg3, found := argsMap[d.Description.ArgNames[2]]
+		if !found {
+			return t1, t2, t3, errors.NewParamNotFoundError(d.Description.ArgNames[2])
+		}
+		err = json.Unmarshal(*arg3, &t3)
 		if err != nil {
 			return t1, t2, t3, errors.NewInvalidRequestError(err.Error())
 		}
@@ -274,6 +312,9 @@ func (d *Describer3[T1, T2, T3, R]) unmarshal(bytes []byte) (T1, T2, T3, error) 
 			return t1, t2, t3, errors.NewInvalidRequestError(err.Error())
 		}
 
+		if len(argsArray) != 3 {
+			return t1, t2, t3, errors.NewInvalidParamsError(fmt.Sprintf("args array has incorrect length [%d]", len(argsArray)))
+		}
 		err = json.Unmarshal(*argsArray[0], &t1)
 		if err != nil {
 			return t1, t2, t3, errors.NewInvalidRequestError(err.Error())

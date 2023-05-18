@@ -15,13 +15,13 @@ import (
 )
 
 type HttpServer struct {
-	logger   *logrus.Logger
+	log      *logrus.Entry
 	registry *registry.Registry
 }
 
-func NewServer(logger *logrus.Logger) *HttpServer {
+func NewServer(log *logrus.Entry) *HttpServer {
 	return &HttpServer{
-		logger:   logger,
+		log:      log,
 		registry: &registry.Registry{Registry: map[string]*registry.RpcDescriptor{}},
 	}
 }
@@ -73,21 +73,31 @@ func NewProcessor3[T1, T2, T3, R any](
 func (s *HttpServer) Handle(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		s.logger.Error(errors.NewInternalError(err.Error()))
+		s.log.Error(err)
+		responseBytes := api.MarshalError(err)
+		s.write(responseBytes, w, r)
+		return
 	}
 	responseBytes, err := s.handleRequest(body)
 	if err != nil {
+		s.log.Error(err)
 		responseBytes = api.MarshalError(err)
 	}
-	if len(responseBytes) > 0 {
-		n, err := w.Write(responseBytes)
-		if err != nil {
-			s.logger.Error(err)
-		} else {
-			s.logger.Debugf("successfully send response(size %d) for request", n)
-		}
-	}
+	s.write(responseBytes, w, r)
 
+}
+
+func (s *HttpServer) write(responseBytes []byte, w http.ResponseWriter, r *http.Request) {
+	if len(responseBytes) == 0 {
+		s.log.Debugf("empty response for request method [%s] uri [%s] proto [%s]", r.Method, r.RequestURI, r.Proto)
+		return
+	}
+	n, err := w.Write(responseBytes)
+	if err != nil {
+		s.log.Error(err)
+	} else {
+		s.log.Debugf("successfully send response(size %d) for request", n)
+	}
 }
 
 func (s *HttpServer) handleRequest(body []byte) ([]byte, error) {
@@ -111,7 +121,7 @@ func (s *HttpServer) handleRequest(body []byte) ([]byte, error) {
 			return nil, errors.NewParseError(err.Error())
 		}
 
-		s.logger.Debugf("processing request with id [%s]", id)
+		s.log.Debugf("processing request with id [%s]", id)
 		method, err := getMethod(bodyMap)
 		if err != nil {
 			return nil, err
@@ -121,7 +131,11 @@ func (s *HttpServer) handleRequest(body []byte) ([]byte, error) {
 		if !found {
 			return nil, errors.NewMethodNotFoundError(method)
 		}
-		args, err := descriptor.Marshaller.Unmarshal(*bodyMap["params"])
+		var params []byte
+		if bodyMap["params"] != nil {
+			params = *bodyMap["params"]
+		}
+		args, err := descriptor.Marshaller.Unmarshal(params)
 		if err != nil {
 			return nil, errors.NewParseError(err.Error())
 		}
@@ -135,27 +149,33 @@ func (s *HttpServer) handleRequest(body []byte) ([]byte, error) {
 		// notification
 		method, err := getMethod(bodyMap)
 		if err != nil {
-			s.logger.Error(err)
+			s.log.Error(err)
 			return nil, nil
 		}
 
 		descriptor, found := s.registry.Descriptor(method)
 		if !found {
-			s.logger.Error(errors.NewMethodNotFoundError(method))
+			s.log.Error(errors.NewMethodNotFoundError(method))
 			return nil, nil
 		}
-		args, err := descriptor.Marshaller.Unmarshal(*bodyMap["params"])
+
+		var params []byte
+		if bodyMap["params"] != nil {
+			params = *bodyMap["params"]
+		}
+
+		args, err := descriptor.Marshaller.Unmarshal(params)
 		if err != nil {
-			s.logger.Error(errors.NewParseError(err.Error()))
+			s.log.Error(errors.NewParseError(err.Error()))
 			return nil, nil
 		}
 
 		result, err := descriptor.MethodHandle.Call(args)
 		if err != nil {
-			s.logger.Errorf("notification [%s] return error %v", method, err)
+			s.log.Errorf("notification [%s] return error %v", method, err)
 		}
 		if result != nil {
-			s.logger.Warnf("notification [%s] return something", method)
+			s.log.Warnf("notification [%s] return something", method)
 		}
 		return nil, nil
 	}

@@ -13,7 +13,7 @@ import (
 func main() {
 	logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetOutput(os.Stdout)
-	httpServer := server.NewServer(logrus.WithField("id", "ion-http-server").Logger)
+	httpServer := server.NewServer(logrus.WithField("server_id", "ion-http-server"))
 	server.NewProcessor1(httpServer, &testingNamespace.TestProcedureDescriber, func(t *testingNamespace.TestType) (string, error) {
 		return fmt.Sprint(t.TestTypeNumericProperty), nil
 	})

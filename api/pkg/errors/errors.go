@@ -38,7 +38,7 @@ func NewInvalidRequestError(message string) *JsonRpcError {
 func NewMethodNotFoundError(methodName string) *JsonRpcError {
 	return &JsonRpcError{
 		Code:    MethodNotFoundErrorCode,
-		Message: fmt.Sprintf("[%s] not found", methodName),
+		Message: fmt.Sprintf("method [%s] not found", methodName),
 	}
 }
 
@@ -48,6 +48,20 @@ func NewInvalidParamsError(message string) *JsonRpcError {
 	return &JsonRpcError{
 		Code:    InvalidParamsErrorCode,
 		Message: message,
+	}
+}
+
+func NewParamNotFoundError(argName string) *JsonRpcError {
+	return &JsonRpcError{
+		Code:    InvalidParamsErrorCode,
+		Message: fmt.Sprintf("arg [%s] not found", argName),
+	}
+}
+
+func NewIncorrectArgsArrayLengthError(have, want int) *JsonRpcError {
+	return &JsonRpcError{
+		Code:    InvalidParamsErrorCode,
+		Message: fmt.Sprintf("args array has incorrect size. have [%d] want [%d]", have, want),
 	}
 }
 
@@ -61,5 +75,5 @@ func NewInternalError(message string) *JsonRpcError {
 }
 
 func (e *JsonRpcError) Error() string {
-	return fmt.Sprintf("JsonRpcError: {Code: %d, Message: %s}",e.Code,e.Message)
+	return fmt.Sprintf("JsonRpcError: {Code: %d, Message: %s}", e.Code, e.Message)
 }
