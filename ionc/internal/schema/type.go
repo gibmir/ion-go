@@ -18,6 +18,8 @@ const (
 	StringGolangTypeName  = "string"
 	IntGolangTypeName     = "int"
 	Float64GolangTypeName = "float64"
+	ListGolangTypeName    = "List"
+	MapGolangTypeName     = "Map"
 )
 
 type TypeNode struct {

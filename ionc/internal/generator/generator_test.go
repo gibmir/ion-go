@@ -58,9 +58,9 @@ func TestGenerateProcedureDescriber(t *testing.T) {
 				},
 			},
 			expectedType: `
-TestProcedureNameDescriber = api.Describer1[*TestArgumentType, *TestReturnTypeTypeName]{
-  Describer: &api.Describer{
-    Description: &api.ProcedureDescription{
+TestProcedureNameDescriber = Describer1[*TestArgumentType, *TestReturnTypeTypeName]{
+  Describer: &Describer{
+    Description: &ProcedureDescription{
       ProcedureName: "testProcedureName",
       ArgNames: []string{
         "testArgumentName",
@@ -200,6 +200,37 @@ type TestTypeName[T1 any,T2 any] struct{
 }
 `,
 		},
+
+		{
+			name: "check generic type(list)",
+			typeDeclaration: &schema.TypeDeclaration{
+				SchemaElement: &schema.SchemaElement{
+					Name:        testTypeName,
+					Description: testTypeDescription,
+				},
+				PropertyTypes: []schema.PropertyType{
+					{
+						SchemaElement: &schema.SchemaElement{
+							Name:        testPropertyTypeName,
+							Description: testPropertyTypeDescription,
+						},
+						TypeName: "list<number>",
+					},
+				},
+			},
+			expectedType: `
+// TestTypeName test type description
+type TestTypeName struct{
+  
+  // TestPropertyTypeName test property type description
+  TestPropertyTypeName List[float64]
+  
+}
+`,
+		},
+
+
+
 	}
 
 	for _, c := range cases {

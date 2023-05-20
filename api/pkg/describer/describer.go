@@ -14,6 +14,9 @@ var (
 	unmarshableJson = `{"jsonrpc":"2.0","error":{"code": %d,"message": "%s"},"id":"%s"}`
 )
 
+type List[T any] []T
+type Map[K comparable, V any] map[K]V
+
 type ProcedureDescription struct {
 	ProcedureName string
 	ArgNames      []string

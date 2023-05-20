@@ -25,7 +25,7 @@ func main() {
 	}
 	responses := make(chan string)
 	errors := make(chan *errors.JsonRpcError)
-	request.PositionalCall("test-id", &testingNamespace.TestType{TestTypeNumericProperty:10}, responses, errors)
+	request.PositionalCall("test-id", &testingNamespace.TestType{TestTypeNumericProperty:10, TestListType: []float64{1,2,3}}, responses, errors)
 	select {
 	case response := <-responses:
 		fmt.Println(response)

@@ -9,14 +9,18 @@
               "type": "number",
               "description": "numeric property"
             },
-						"testTypeErrorFlag": {
-							"type": "boolean",
-							"description": "returns error if true"
-						},
-						"testTypeJsonRpcErrorFlag": {
-							"type": "boolean",
-							"description": "returns json-rpc error if true"
-						}
+            "testTypeErrorFlag": {
+              "type": "boolean",
+              "description": "returns error if true"
+            },
+            "testTypeJsonRpcErrorFlag": {
+              "type": "boolean",
+              "description": "returns json-rpc error if true"
+            },
+            "testListType": {
+              "type": "list<number>",
+              "description": "test array property"
+            }
           }
         }
       },

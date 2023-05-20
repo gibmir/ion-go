@@ -29,7 +29,7 @@ var (
 	typeTemplate *template.Template = template.Must(template.
 		New("type").
 		Funcs(map[string]any{
-			"public": public,
+			"public":   public,
 			"typeName": typeName,
 		}).
 		Parse(typeTemplateText))
@@ -77,7 +77,7 @@ func generateNamespace(namespace *schema.Namespace) (string, error) {
 	stringBuilder := strings.Builder{}
 	stringBuilder.WriteString(fmt.Sprintf("// %s %s\n", namespace.Name, namespace.Description))
 	stringBuilder.WriteString(fmt.Sprintf("package %s\n", namespace.Name))
-	stringBuilder.WriteString(fmt.Sprintf("import api \"%s\"\n", defaultImport))
+	stringBuilder.WriteString(fmt.Sprintf("import . \"%s\"\n", defaultImport))
 	var err error
 	stringBuilder.WriteString("var (\n")
 	for _, procedure := range namespace.Procedures {
@@ -136,9 +136,9 @@ func generateProcedure(stringBuilder *strings.Builder, procedure *schema.Procedu
 
 func generateProcedure0(stringBuilder *strings.Builder, procedure *schema.Procedure) {
 	procedureDescriber := fmt.Sprintf(`
-%sDescriber = api.Describer0[%s]{
-  Describer: &api.Describer{
-    Description: &api.ProcedureDescription{
+%sDescriber = Describer0[%s]{
+  Describer: &Describer{
+    Description: &ProcedureDescription{
       ProcedureName: "%s",
     },
   },
@@ -149,9 +149,9 @@ func generateProcedure0(stringBuilder *strings.Builder, procedure *schema.Proced
 
 func generateProcedure1(stringBuilder *strings.Builder, procedure *schema.Procedure) {
 	procedureDescriber := fmt.Sprintf(`
-%sDescriber = api.Describer1[%s, %s]{
-  Describer: &api.Describer{
-    Description: &api.ProcedureDescription{
+%sDescriber = Describer1[%s, %s]{
+  Describer: &Describer{
+    Description: &ProcedureDescription{
       ProcedureName: "%s",
       ArgNames: []string{
         "%s",
@@ -167,9 +167,9 @@ func generateProcedure1(stringBuilder *strings.Builder, procedure *schema.Proced
 
 func generateProcedure2(stringBuilder *strings.Builder, procedure *schema.Procedure) {
 	procedureDescriber := fmt.Sprintf(`
-%sDescriber = api.Describer2[%s, %s, %s]{
-  Describer: &api.Describer{
-    Description: &api.ProcedureDescription{
+%sDescriber = Describer2[%s, %s, %s]{
+  Describer: &Describer{
+    Description: &ProcedureDescription{
 	    ProcedureName: "%s",
         ArgNames: []string{
 	        "%s",
@@ -188,9 +188,9 @@ func generateProcedure2(stringBuilder *strings.Builder, procedure *schema.Proced
 
 func generateProcedure3(stringBuilder *strings.Builder, procedure *schema.Procedure) {
 	procedureDescriber := fmt.Sprintf(`
-%sDescriber = api.Describer3[%s, %s, %s, %s]{
-  Describer: &api.Describer{
-    Description: &api.ProcedureDescription{
+%sDescriber = Describer3[%s, %s, %s, %s]{
+  Describer: &Describer{
+    Description: &ProcedureDescription{
 	    ProcedureName: "%s",
         ArgNames: []string{
 	        "%s",
@@ -214,8 +214,7 @@ func public(fieldName string) string {
 	return string(fieldRunes)
 }
 
-func typeName(typeName string) string{
-
+func typeName(typeName string) string {
 	switch typeName {
 	case schema.BoolGolangTypeName:
 		return schema.BoolGolangTypeName
@@ -226,6 +225,13 @@ func typeName(typeName string) string{
 	case schema.Float64GolangTypeName:
 		return schema.Float64GolangTypeName
 	default:
-		return "*"+public(typeName)
+		return prepareTypeName(typeName)
 	}
+}
+
+func prepareTypeName(typeName string) string {
+	if strings.HasPrefix(typeName, schema.ListGolangTypeName+"[") || strings.HasPrefix(typeName, schema.MapGolangTypeName+"[") {
+		return public(typeName)
+	}
+	return "*" + public(typeName)
 }

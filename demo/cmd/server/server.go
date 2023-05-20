@@ -15,7 +15,7 @@ func main() {
 	logrus.SetOutput(os.Stdout)
 	httpServer := server.NewServer(logrus.WithField("server_id", "ion-http-server"))
 	server.NewProcessor1(httpServer, &testingNamespace.TestProcedureDescriber, func(t *testingNamespace.TestType) (string, error) {
-		return fmt.Sprint(t.TestTypeNumericProperty), nil
+		return fmt.Sprint(t.TestTypeNumericProperty)+fmt.Sprint(t.TestListType), nil
 	})
 
 	mux := http.NewServeMux()

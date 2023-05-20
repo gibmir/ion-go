@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"unicode"
+
+	"github.com/gibmir/ion-go/ionc/internal/schema"
 )
 
 type Tree[T any] struct {
@@ -167,17 +169,17 @@ func ToTypeName(t *Tree[*strings.Builder]) string {
 
 func isCustomType(typeName string) bool {
 	switch typeName {
-	case "boolean":
+	case schema.BooleanType:
 		return false
-	case "string":
+	case schema.StringType:
 		return false
-	case "number":
+	case schema.NumberType:
 		return false
-	case "int":
+	case schema.IntType:
 		return false
-	case "list":
+	case schema.ListType:
 		return false
-	case "map":
+	case schema.MapType:
 		return false
 	default:
 		return true
@@ -186,13 +188,13 @@ func isCustomType(typeName string) bool {
 
 func isParametrizedType(typeName string) bool {
 	switch typeName {
-	case "boolean":
+	case schema.BooleanType:
 		return false
-	case "string":
+	case schema.StringType:
 		return false
-	case "number":
+	case schema.NumberType:
 		return false
-	case "int":
+	case schema.IntType:
 		return false
 	default:
 		return true
@@ -208,7 +210,7 @@ func buildParametrizedTypeName(typeName string, typeParametrization []string) st
 	result.WriteRune('[')
 
 	for i, parametrizationTypeName := range typeParametrization {
-		preparedTypeName := parametrizationTypeName
+		preparedTypeName := prepareGolangType(parametrizationTypeName)
 		// custom type should starts with title letter
 		if isCustomType(parametrizationTypeName) {
 			preparedTypeName = prepareTypeName(parametrizationTypeName)
@@ -227,4 +229,20 @@ func prepareTypeName(typeName string) string {
 	typeNameRunes := []rune(typeName)
 	typeNameRunes[0] = unicode.ToUpper(typeNameRunes[0])
 	return string(typeNameRunes)
+}
+
+func prepareGolangType(typeName string) string {
+	switch typeName {
+	case schema.BooleanType:
+		return schema.BoolGolangTypeName
+	case schema.StringType:
+		return schema.StringGolangTypeName
+	case schema.NumberType:
+		return schema.Float64GolangTypeName
+	case schema.IntType:
+		return schema.IntGolangTypeName
+	default:
+		// return type as is
+		return typeName
+	}
 }
